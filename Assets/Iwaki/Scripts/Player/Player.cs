@@ -24,15 +24,21 @@ public class Player : MonoBehaviour
     [SerializeField] float slidingSpeed = 10;
     [SerializeField] float slidingAngle = 30;
 
+    [Header("Hanging")]
+    [SerializeField] Vector2 _ledgeHangingOrigin = new(0, 0.5f);
+    [SerializeField] float _ledgeHangingWidth = 0.5f;
+    [SerializeField] float _ledgeHangingHeight = 0.2f;
+
     Rigidbody2D _rb;
 
     float _currentSpeed;
     float _currentAccel;
 
     Vector2 _input;
-    float _forwardDirection;
+    float _forwardDirection = 1;
     bool _isGrounded;
     bool _isCrouching;
+    bool _isHanging;
 
     readonly HashSet<Collider2D> _inContacts = new();
 
@@ -46,8 +52,29 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        IsHanging();
+
         UpdateSpeed();
+
+        if (_isHanging) return;
+
         _rb.linearVelocityX = Mathf.MoveTowards(_rb.linearVelocityX, _input.x * _currentSpeed, _currentAccel * Time.deltaTime);
+    }
+
+    void IsHanging()
+    {
+        if (_rb.linearVelocityY > 0) return;
+
+        var origin = _ledgeHangingOrigin + (Vector2)transform.position;
+        var crossPoint = new Vector2(origin.x + _ledgeHangingWidth * _forwardDirection, origin.y);
+
+        var wallHit = Physics2D.Raycast(origin, Vector2.right * _forwardDirection, _ledgeHangingWidth, groundedLayer.value);
+        var floorHit = Physics2D.Raycast(crossPoint + Vector2.up * _ledgeHangingHeight, Vector2.down, _ledgeHangingHeight, groundedLayer.value);
+
+        if (wallHit.collider && floorHit.collider)
+        {
+            print($"Hanging <wall:{wallHit.collider.name}> <floor:{floorHit.collider.name}>");
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -191,5 +218,16 @@ public class Player : MonoBehaviour
         }
 
         GUILayout.EndVertical();
+    }
+
+    private void OnDrawGizmos()
+    {
+        var dir = _forwardDirection >= 0 ? 1 : -1;
+
+        var origin = _ledgeHangingOrigin + (Vector2)transform.position;
+        var crossPoint = new Vector2(origin.x + _ledgeHangingWidth * dir, origin.y);
+
+        Debug.DrawLine(origin, crossPoint);
+        Debug.DrawLine(crossPoint, crossPoint + _ledgeHangingHeight * Vector2.up);
     }
 }
