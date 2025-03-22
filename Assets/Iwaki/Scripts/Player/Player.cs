@@ -3,21 +3,27 @@ using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] float speed;
+    [SerializeField] float speed = 5;
+    [SerializeField] float accel = 20;
     Rigidbody2D _rb;
+
+    Vector2 _input;
 
     private void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
     }
 
+    private void Update()
+    {
+        _rb.linearVelocityX = Mathf.MoveTowards(_rb.linearVelocityX, _input.x * speed, accel * Time.deltaTime);
+    }
+
     void OnMove(InputValue value)
     {
         print("Move");
 
-        var input = value.Get<Vector2>();
-
-        _rb.linearVelocityX = input.x * speed;
+        _input = value.Get<Vector2>();
     }
 
     void OnJump(InputValue value)
