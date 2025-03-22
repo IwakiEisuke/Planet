@@ -30,6 +30,7 @@ public class Player : MonoBehaviour
     float _currentAccel;
 
     Vector2 _input;
+    float _forwardDirection;
     bool _isGrounded;
     bool _isCrouching;
 
@@ -97,6 +98,11 @@ public class Player : MonoBehaviour
         print("Move");
 
         _input = value.Get<Vector2>();
+
+        if (Mathf.Abs(_input.x) > 0)
+        {
+            _forwardDirection = _input.x > 0 ? 1 : -1;
+        }
     }
 
     void OnJump(InputValue value)
@@ -108,7 +114,7 @@ public class Player : MonoBehaviour
         if (_isCrouching)
         {
             var angle = slidingAngle * Mathf.Deg2Rad;
-            _rb.linearVelocity = new Vector2(slidingSpeed * Mathf.Cos(angle), slidingSpeed * Mathf.Sin(angle));
+            _rb.linearVelocity = new Vector2(_forwardDirection * slidingSpeed * Mathf.Cos(angle), slidingSpeed * Mathf.Sin(angle));
         }
         else
         {
