@@ -161,9 +161,9 @@ public class Player : MonoBehaviour
             fontSize = 40
         };
 
-        GUILayout.BeginHorizontal();
+        GUILayout.BeginVertical();
         GUILayout.Label($"_isGrounded {_isGrounded}", style);
         GUILayout.Label($"_isCrouching {_isCrouching}", style);
-        GUILayout.EndHorizontal();
+        GUILayout.EndVertical();
     }
 }
