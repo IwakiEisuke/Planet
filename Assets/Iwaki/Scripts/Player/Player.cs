@@ -1,45 +1,56 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField] float speed;
+    Rigidbody2D _rb;
 
-    void OnMove()
+    private void Start()
+    {
+        _rb = GetComponent<Rigidbody2D>();
+    }
+
+    void OnMove(InputValue value)
     {
         print("Move");
 
+        var input = value.Get<Vector2>();
+
+        _rb.linearVelocityX = input.x * speed;
     }
 
-    void OnJump()
+    void OnJump(InputValue value)
     {
         print("Jump");
 
     }
 
-    void OnCrouch()
+    void OnCrouch(InputValue value)
     {
         print("Crouch");
 
     }
 
-    void OnInteract()
+    void OnInteract(InputValue value)
     {
         print("Interact");
 
     }
 
-    void OnBreathe()
+    void OnBreathe(InputValue value)
     {
         print("Breath");
 
     }
 
-    void OnThrow()
+    void OnThrow(InputValue value)
     {
         print("Throw");
 
     }
 
-    void OnEat()
+    void OnEat(InputValue value)
     {
         print("Eat");
 
