@@ -52,13 +52,16 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        IsHanging();
-
-        UpdateSpeed();
-
-        if (_isHanging) return;
-
-        _rb.linearVelocityX = Mathf.MoveTowards(_rb.linearVelocityX, _input.x * _currentSpeed, _currentAccel * Time.deltaTime);
+        if (!_isHanging)
+        {
+            IsHanging();
+            UpdateSpeed();
+            _rb.linearVelocityX = Mathf.MoveTowards(_rb.linearVelocityX, _input.x * _currentSpeed, _currentAccel * Time.deltaTime);
+        }
+        else
+        {
+            _rb.linearVelocity = Vector2.zero;
+        }
     }
 
     void IsHanging()
@@ -74,6 +77,9 @@ public class Player : MonoBehaviour
         if (floorHit.distance > 0.01f && wallHit.collider && floorHit.collider)
         {
             print($"Hanging <wall:{wallHit.collider.name}> <floor:{floorHit.collider.name}>");
+            _isHanging = true;
+            _rb.linearVelocity = Vector2.zero;
+            _rb.bodyType = RigidbodyType2D.Kinematic;
         }
     }
 
@@ -136,7 +142,12 @@ public class Player : MonoBehaviour
     {
         print("Jump");
 
-        if (!_isGrounded) return;
+        if (_isHanging)
+        {
+            _isHanging = false;
+            _rb.bodyType = RigidbodyType2D.Dynamic;
+        }
+        else if (!_isGrounded) return;
 
         if (_isCrouching)
         {
