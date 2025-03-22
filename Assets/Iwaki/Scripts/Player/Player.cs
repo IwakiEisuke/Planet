@@ -29,6 +29,10 @@ public class Player : MonoBehaviour
     [SerializeField] float _ledgeHangingWidth = 0.5f;
     [SerializeField] float _ledgeHangingHeight = 0.2f;
 
+    [Header("Stats")]
+    [SerializeField] PlayerStats _oxygen;
+    [SerializeField] PlayerStats _health;
+
     Rigidbody2D _rb;
 
     float _currentSpeed;
@@ -151,12 +155,15 @@ public class Player : MonoBehaviour
 
         if (_isCrouching)
         {
+            // HeadSliding
             var angle = slidingAngle * Mathf.Deg2Rad;
             _rb.linearVelocity = new Vector2(_forwardDirection * slidingSpeed * Mathf.Cos(angle), slidingSpeed * Mathf.Sin(angle));
+            _oxygen.Value -= 2.5f;
         }
         else
         {
             _rb.linearVelocityY = Mathf.Sqrt(2 * Mathf.Abs(Physics.gravity.y) * jumpHeight);
+            _oxygen.Value -= 1.6f;
         }
     }
 
@@ -203,7 +210,6 @@ public class Player : MonoBehaviour
     void OnThrow(InputValue value)
     {
         print("Throw");
-
     }
 
     void OnEat(InputValue value)
