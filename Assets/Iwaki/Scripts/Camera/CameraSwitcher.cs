@@ -12,10 +12,21 @@ public class CameraSwitcher : MonoBehaviour
         box = GetComponent<BoxCollider2D>();
     }
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
-        print("Switch Camera");
-        cam.Prioritize();
+        print($"Enter Area:{name}");
+
+        if (collision.GetComponent<Player>() is not Player player) return;
+
+        var p = player.transform.position;
+        var max = box.bounds.max;
+        var min = box.bounds.min;
+
+        if (min.x < p.x && p.x < max.x && min.y < p.y && p.y < max.y)
+        {
+            print("Switch Camera");
+            cam.Prioritize();
+        }
     }
 
     private void OnDrawGizmos()
