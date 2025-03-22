@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 public class Player : MonoBehaviour
 {
     [Header("Movement")]
-    [SerializeField] float speed = 5;
+    [SerializeField] float walkSpeed = 5;
     [SerializeField] float accel = 20;
 
     [Header("Jump")]
@@ -15,19 +15,27 @@ public class Player : MonoBehaviour
     [SerializeField] float rayDistance = 1;
     [SerializeField] float canGroundedAngle = 45;
 
+    [Header("Crouch")]
+    [SerializeField] float crouchSpeed = 2.5f;
+
     Rigidbody2D _rb;
+
+    float _currentSpeed;
 
     Vector2 _input;
     bool _isGrounded;
+    bool _isCrouching;
 
     private void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
+
+        _currentSpeed = walkSpeed;
     }
 
     private void Update()
     {
-        _rb.linearVelocityX = Mathf.MoveTowards(_rb.linearVelocityX, _input.x * speed, accel * Time.deltaTime);
+        _rb.linearVelocityX = Mathf.MoveTowards(_rb.linearVelocityX, _input.x * _currentSpeed, accel * Time.deltaTime);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -81,6 +89,16 @@ public class Player : MonoBehaviour
     {
         print("Crouch");
 
+        _isCrouching = value.isPressed;
+
+        if (value.isPressed)
+        {
+            _currentSpeed = crouchSpeed;
+        }
+        else
+        {
+            _currentSpeed = walkSpeed;
+        }
     }
 
     void OnInteract(InputValue value)
