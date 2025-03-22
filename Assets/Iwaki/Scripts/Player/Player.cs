@@ -18,6 +18,10 @@ public class Player : MonoBehaviour
     [Header("Crouch")]
     [SerializeField] float crouchSpeed = 2.5f;
 
+    [Header("Sliding")]
+    [SerializeField] float slidingSpeed = 10;
+    [SerializeField] float slidingAngle = 30;
+
     Rigidbody2D _rb;
 
     float _currentSpeed;
@@ -76,8 +80,18 @@ public class Player : MonoBehaviour
         if (hit)
         {
             print("Hit : " + hit.collider.name);
-            _rb.linearVelocityY = Mathf.Sqrt(2 * Mathf.Abs(Physics.gravity.y) * jumpHeight);
-            _isGrounded = false;
+            if (_isCrouching)
+            {
+                var angle = slidingAngle * Mathf.Deg2Rad;
+                _rb.linearVelocity = new Vector2(slidingSpeed * Mathf.Cos(angle), slidingSpeed * Mathf.Sin(angle));
+            }
+            else
+            {
+                _rb.linearVelocityY = Mathf.Sqrt(2 * Mathf.Abs(Physics.gravity.y) * jumpHeight);
+            }
+
+                _isGrounded = false;
+
         }
         else
         {
