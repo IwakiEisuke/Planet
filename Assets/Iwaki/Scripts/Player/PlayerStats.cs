@@ -2,29 +2,30 @@ using UnityEngine;
 
 public class PlayerStats : MonoBehaviour
 {
-    [SerializeField] string statsName;
     [SerializeField] float max = 10;
-    [SerializeField] float regenerate = 2;
+    [SerializeField] float regeneration = 2;
+
     float _current;
 
-    public float Value => _current;
+    public bool IsRegenerate { get; set; }
+    public float Value { get => _current; set => _current = Mathf.Min(value, max); }
 
-    public void Update()
+    private void Start()
     {
-        if (_current < max)
+        _current = max;
+
+        if (regeneration != 0)
         {
-            _current = Mathf.Min(_current + regenerate * Time.deltaTime, max);
+            IsRegenerate = true;
         }
     }
 
-    public void Reduce(float value)
+    public void Update()
     {
-        _current -= value;
-    }
-
-    public void Add(float value)
-    {
-        _current = Mathf.Min(_current + value, max);
+        if (IsRegenerate && _current < max)
+        {
+            Value += regeneration * Time.deltaTime;
+        }
     }
 
     public float GetRatio()
