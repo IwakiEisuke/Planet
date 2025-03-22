@@ -885,14 +885,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7203926c5873e444aa98f100a3c20bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
+  walkSpeed: 5
   accel: 20
+  airAccel: 5
   jumpHeight: 1
   groundedLayer:
     serializedVersion: 2
     m_Bits: 55
   rayDistance: 1
   canGroundedAngle: 45
+  crouchSpeed: 2.5
+  slidingSpeed: 10
+  slidingAngle: 30
 --- !u!114 &1298224009
 MonoBehaviour:
   m_ObjectHideFlags: 0

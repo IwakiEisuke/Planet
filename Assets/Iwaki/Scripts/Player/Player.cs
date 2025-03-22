@@ -6,6 +6,7 @@ public class Player : MonoBehaviour
     [Header("Movement")]
     [SerializeField] float walkSpeed = 5;
     [SerializeField] float accel = 20;
+    [SerializeField] float airAccel = 5;
 
     [Header("Jump")]
     [SerializeField] float jumpHeight = 2;
@@ -25,6 +26,7 @@ public class Player : MonoBehaviour
     Rigidbody2D _rb;
 
     float _currentSpeed;
+    float _currentAccel;
 
     Vector2 _input;
     bool _isGrounded;
@@ -35,11 +37,13 @@ public class Player : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
 
         _currentSpeed = walkSpeed;
+        _currentAccel = accel;
     }
 
     private void Update()
     {
-        _rb.linearVelocityX = Mathf.MoveTowards(_rb.linearVelocityX, _input.x * _currentSpeed, accel * Time.deltaTime);
+        UpdateSpeed();
+        _rb.linearVelocityX = Mathf.MoveTowards(_rb.linearVelocityX, _input.x * _currentSpeed, _currentAccel * Time.deltaTime);
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -90,8 +94,7 @@ public class Player : MonoBehaviour
                 _rb.linearVelocityY = Mathf.Sqrt(2 * Mathf.Abs(Physics.gravity.y) * jumpHeight);
             }
 
-                _isGrounded = false;
-
+            _isGrounded = false;
         }
         else
         {
@@ -104,8 +107,20 @@ public class Player : MonoBehaviour
         print("Crouch");
 
         _isCrouching = value.isPressed;
+    }
 
-        if (value.isPressed)
+    void UpdateSpeed()
+    {
+        if (_isGrounded)
+        {
+            _currentAccel = accel;
+        }
+
+        if (!_isGrounded)
+        {
+            _currentAccel = airAccel;
+        }
+        else if (_isCrouching)
         {
             _currentSpeed = crouchSpeed;
         }
@@ -137,5 +152,18 @@ public class Player : MonoBehaviour
     {
         print("Eat");
 
+    }
+
+    private void OnGUI()
+    {
+        var style = new GUIStyle(GUI.skin.label)
+        {
+            fontSize = 40
+        };
+
+        GUILayout.BeginHorizontal();
+        GUILayout.Label($"_isGrounded {_isGrounded}", style);
+        GUILayout.Label($"_isCrouching {_isCrouching}", style);
+        GUILayout.EndHorizontal();
     }
 }
