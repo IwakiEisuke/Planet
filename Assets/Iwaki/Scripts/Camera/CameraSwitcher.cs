@@ -23,6 +23,7 @@ public class CameraSwitcher : MonoBehaviour
         var width = height * cam.Lens.Aspect;
 
         box.size = new Vector2(width, height);
+        box.transform.position = new Vector2(cam.transform.position.x, cam.transform.position.y);
     }
 
     private void Update()
