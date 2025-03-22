@@ -3,8 +3,17 @@ using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
 {
+    [Header("Movement")]
     [SerializeField] float speed = 5;
     [SerializeField] float accel = 20;
+
+    [Header("Jump")]
+    [SerializeField] float jumpHeight = 2;
+
+    [Header("Check Grounded")]
+    [SerializeField] LayerMask groundedLayer;
+    [SerializeField] float rayDistance = 1;
+
     Rigidbody2D _rb;
 
     Vector2 _input;
@@ -30,6 +39,16 @@ public class Player : MonoBehaviour
     {
         print("Jump");
 
+        var hit = Physics2D.Raycast(transform.position, Vector2.down, rayDistance, groundedLayer.value);
+        if (hit)
+        {
+            print("Hit : " + hit.collider.name);
+            _rb.linearVelocityY = Mathf.Sqrt(2 * Mathf.Abs(Physics.gravity.y) * jumpHeight);
+        }
+        else
+        {
+            print("NotGrounded");
+        }
     }
 
     void OnCrouch(InputValue value)

@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 195781869}
   - component: {fileID: 195781868}
   - component: {fileID: 195781867}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: C_Arc
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -224,7 +224,7 @@ GameObject:
   - component: {fileID: 284108111}
   - component: {fileID: 284108110}
   - component: {fileID: 284108109}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: C_Start
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -723,7 +723,7 @@ GameObject:
   - component: {fileID: 1298224007}
   - component: {fileID: 1298224006}
   - component: {fileID: 1298224009}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -826,7 +826,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!61 &1298224007
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -886,7 +886,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
-  accel: 10
+  accel: 20
+  jumpHeight: 1
+  groundedLayer:
+    serializedVersion: 2
+    m_Bits: 55
+  rayDistance: 1
 --- !u!114 &1298224009
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1741,9 +1746,9 @@ SceneRoots:
   m_Roots:
   - {fileID: 519420032}
   - {fileID: 619394802}
+  - {fileID: 1958105332}
   - {fileID: 1032141240}
   - {fileID: 1648500434}
   - {fileID: 195781869}
-  - {fileID: 1958105332}
   - {fileID: 1298224005}
   - {fileID: 1648957198}
