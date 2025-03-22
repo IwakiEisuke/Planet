@@ -2,15 +2,46 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+
+    void OnMove()
     {
-        
+        print("Move");
+
     }
 
-    // Update is called once per frame
-    void Update()
+    void OnJump()
     {
-        
+        print("Jump");
+
+    }
+
+    void OnCrouch()
+    {
+        print("Crouch");
+
+    }
+
+    void OnInteract()
+    {
+        print("Interact");
+
+    }
+
+    void OnBreathe()
+    {
+        print("Breath");
+
+    }
+
+    void OnThrow()
+    {
+        print("Throw");
+
+    }
+
+    void OnEat()
+    {
+        print("Eat");
+
     }
 }
