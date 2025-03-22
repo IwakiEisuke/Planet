@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -32,6 +33,8 @@ public class Player : MonoBehaviour
     bool _isGrounded;
     bool _isCrouching;
 
+    readonly HashSet<Collider2D> _inContacts = new();
+
     private void Start()
     {
         _rb = GetComponent<Rigidbody2D>();
@@ -56,8 +59,30 @@ public class Player : MonoBehaviour
         IsGrounded(collision);
     }
 
+    private void OnCollisionExit2D(Collision2D collision)
+    {
+        _inContacts.Remove(collision.collider);
+
+        if (_inContacts.Count == 0)
+        {
+            _isGrounded = false;
+        }
+    }
+
     void IsGrounded(Collision2D collision)
     {
+        // ‚±‚ê‚¢‚éH
+        //var hit = Physics2D.Raycast(transform.position, Vector2.down, rayDistance, groundedLayer.value);
+        //print("Hit: " + hit.collider.name);
+
+        //if (hit.collider == null)
+        //{
+        //    _isGrounded = false;
+        //    return;
+        //}
+
+        _inContacts.Add(collision.collider);
+
         foreach (var contact in collision.contacts)
         {
             if (Vector2.Dot(Vector2.up, contact.normal) >= Mathf.Cos(canGroundedAngle * Mathf.Deg2Rad))
@@ -80,25 +105,14 @@ public class Player : MonoBehaviour
 
         if (!_isGrounded) return;
 
-        var hit = Physics2D.Raycast(transform.position, Vector2.down, rayDistance, groundedLayer.value);
-        if (hit)
+        if (_isCrouching)
         {
-            print("Hit : " + hit.collider.name);
-            if (_isCrouching)
-            {
-                var angle = slidingAngle * Mathf.Deg2Rad;
-                _rb.linearVelocity = new Vector2(slidingSpeed * Mathf.Cos(angle), slidingSpeed * Mathf.Sin(angle));
-            }
-            else
-            {
-                _rb.linearVelocityY = Mathf.Sqrt(2 * Mathf.Abs(Physics.gravity.y) * jumpHeight);
-            }
-
-            _isGrounded = false;
+            var angle = slidingAngle * Mathf.Deg2Rad;
+            _rb.linearVelocity = new Vector2(slidingSpeed * Mathf.Cos(angle), slidingSpeed * Mathf.Sin(angle));
         }
         else
         {
-            print("NotGrounded");
+            _rb.linearVelocityY = Mathf.Sqrt(2 * Mathf.Abs(Physics.gravity.y) * jumpHeight);
         }
     }
 
@@ -164,6 +178,12 @@ public class Player : MonoBehaviour
         GUILayout.BeginVertical();
         GUILayout.Label($"_isGrounded {_isGrounded}", style);
         GUILayout.Label($"_isCrouching {_isCrouching}", style);
+
+        foreach (var c in _inContacts)
+        {
+            GUILayout.Label($"contact: {c.name}", style);
+        }
+
         GUILayout.EndVertical();
     }
 }
