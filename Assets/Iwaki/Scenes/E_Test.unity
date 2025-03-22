@@ -888,7 +888,7 @@ MonoBehaviour:
   walkSpeed: 5
   accel: 20
   airAccel: 5
-  jumpHeight: 1
+  jumpHeight: 2
   groundedLayer:
     serializedVersion: 2
     m_Bits: 55
@@ -896,7 +896,7 @@ MonoBehaviour:
   canGroundedAngle: 45
   crouchSpeed: 2.5
   slidingSpeed: 10
-  slidingAngle: 30
+  slidingAngle: 20
 --- !u!114 &1298224009
 MonoBehaviour:
   m_ObjectHideFlags: 0
