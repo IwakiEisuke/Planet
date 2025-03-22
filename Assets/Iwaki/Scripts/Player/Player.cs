@@ -71,7 +71,7 @@ public class Player : MonoBehaviour
         var wallHit = Physics2D.Raycast(origin, Vector2.right * _forwardDirection, _ledgeHangingWidth, groundedLayer.value);
         var floorHit = Physics2D.Raycast(crossPoint + Vector2.up * _ledgeHangingHeight, Vector2.down, _ledgeHangingHeight, groundedLayer.value);
 
-        if (wallHit.collider && floorHit.collider)
+        if (floorHit.distance > 0.01f && wallHit.collider && floorHit.collider)
         {
             print($"Hanging <wall:{wallHit.collider.name}> <floor:{floorHit.collider.name}>");
         }

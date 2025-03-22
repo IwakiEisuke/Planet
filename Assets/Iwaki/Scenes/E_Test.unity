@@ -1153,7 +1153,7 @@ MonoBehaviour:
   slidingAngle: 20
   _ledgeHangingOrigin: {x: 0, y: 0.5}
   _ledgeHangingWidth: 0.5
-  _ledgeHangingHeight: 0.2
+  _ledgeHangingHeight: 0.4
 --- !u!114 &1298224009
 MonoBehaviour:
   m_ObjectHideFlags: 0
