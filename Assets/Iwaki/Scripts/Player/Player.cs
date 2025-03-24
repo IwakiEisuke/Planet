@@ -203,11 +203,16 @@ public class Player : MonoBehaviour
     {
         print("Interact");
 
-        var hit = Physics2D.OverlapCircle(transform.position, 2);
-        if (hit)
+        if (_item != null)
         {
-            _item = hit.GetComponentInParent<ItemBase>();
+            var hit = Physics2D.OverlapCircle(transform.position, 2);
+            if (hit)
+            {
+                _item = hit.GetComponentInParent<ItemBase>();
+                print("PickUp " + _item.name);
+            }
         }
+        
     }
 
     void OnBreathe(InputValue value)

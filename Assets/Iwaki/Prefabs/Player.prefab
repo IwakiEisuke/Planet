@@ -237,7 +237,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   walkSpeed: 5
   accel: 20
-  airAccel: 5
+  airAccel: 10
   jumpHeight: 4
   groundedLayer:
     serializedVersion: 2
