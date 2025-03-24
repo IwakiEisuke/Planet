@@ -46,6 +46,18 @@ public class PlayerLookAtController : MonoBehaviour
             lookAt = null;
         }
     }
+
+    public float DistanceFromHead()
+    {
+        if (lookAt)
+        {
+            return Vector2.Distance(lookAt.position, head.position);
+        }
+        else
+        {
+            return float.MaxValue;
+        }
+    }
 }
 
 public enum LookAtType
