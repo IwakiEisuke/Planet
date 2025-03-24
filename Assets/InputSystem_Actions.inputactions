@@ -15,15 +15,6 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Interact",
-                    "type": "Button",
-                    "id": "852140f2-7766-474d-8707-702459ba45f3",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "Crouch",
                     "type": "Button",
                     "id": "27c5f898-bc57-4ee1-8800-db469aca5fe3",
@@ -51,6 +42,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Interact",
+                    "type": "Button",
+                    "id": "852140f2-7766-474d-8707-702459ba45f3",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "Tap(duration=0.5)",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Throw",
                     "type": "Button",
                     "id": "57f935ea-a43f-4978-81a6-fe92c9235b8b",
@@ -65,7 +65,7 @@
                     "id": "b197698e-f925-4f5e-99c7-781eb0ad7135",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": "",
+                    "interactions": "Hold",
                     "initialStateCheck": false
                 }
             ],
@@ -282,7 +282,7 @@
                 {
                     "name": "",
                     "id": "efd65a48-6b4b-4bae-a8d1-583d285a8dc0",
-                    "path": "<Keyboard>/f",
+                    "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

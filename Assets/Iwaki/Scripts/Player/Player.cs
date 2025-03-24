@@ -224,9 +224,13 @@ public class Player : MonoBehaviour
                 print("PickUp " + _item.name);
             }
         }
-        else
+        else if (_isCrouching)
         {
             DropItem();
+        }
+        else
+        {
+            Throw();
         }
     }
 
@@ -236,7 +240,7 @@ public class Player : MonoBehaviour
 
     }
 
-    void OnThrow(InputValue value)
+    void Throw()
     {
         print("Throw");
 
