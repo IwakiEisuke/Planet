@@ -1003,7 +1003,7 @@ GameObject:
   - component: {fileID: 682793263}
   - component: {fileID: 682793262}
   - component: {fileID: 682793264}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Item
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1613,6 +1613,21 @@ MonoBehaviour:
   _ledgeHangingHeight: 0.4
   _oxygen: {fileID: 328570757}
   _health: {fileID: 0}
+  _item: {fileID: 0}
+  _contactFilter:
+    useTriggers: 0
+    useLayerMask: 1
+    useDepth: 0
+    useOutsideDepth: 0
+    useNormalAngle: 0
+    useOutsideNormalAngle: 0
+    layerMask:
+      serializedVersion: 2
+      m_Bits: 0
+    minDepth: 0
+    maxDepth: 0
+    minNormalAngle: 0
+    maxNormalAngle: 0
 --- !u!114 &1298224009
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1937,7 +1952,7 @@ GameObject:
   - component: {fileID: 1629788667}
   - component: {fileID: 1629788669}
   - component: {fileID: 1629788670}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}

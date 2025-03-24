@@ -33,6 +33,10 @@ public class Player : MonoBehaviour
     [SerializeField] PlayerStats _oxygen;
     [SerializeField] PlayerStats _health;
 
+    [Header("Item")]
+    [SerializeField] ItemBase _item;
+    [SerializeField] ContactFilter2D _contactFilter;
+
     Rigidbody2D _rb;
 
     float _currentSpeed;
@@ -199,6 +203,11 @@ public class Player : MonoBehaviour
     {
         print("Interact");
 
+        var hit = Physics2D.OverlapCircle(transform.position, 2);
+        if (hit)
+        {
+            _item = hit.GetComponentInParent<ItemBase>();
+        }
     }
 
     void OnBreathe(InputValue value)
