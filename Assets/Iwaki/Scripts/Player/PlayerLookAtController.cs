@@ -10,8 +10,9 @@ public class PlayerLookAtController : MonoBehaviour
 
     [Space(10)]
     [SerializeField] Transform lookAt;
-    
+
     public Transform LookAt => lookAt;
+    public LookAtType LookAtType { get; private set; }
 
     private void Update()
     {
@@ -26,6 +27,7 @@ public class PlayerLookAtController : MonoBehaviour
             if (hits[i].TryGetComponent<ItemPit>(out var pit))
             {
                 lookAt = pit.transform;
+                LookAtType = LookAtType.ItemPit;
                 _isExistInterestingStuff = true;
             }
             else if (hits[i].GetComponentInParent<ItemBase>() is ItemBase item)
@@ -33,6 +35,7 @@ public class PlayerLookAtController : MonoBehaviour
                 if (item != player.HandItem)
                 {
                     lookAt = item.transform;
+                    LookAtType = LookAtType.Item;
                     _isExistInterestingStuff = true;
                 }
             }
@@ -43,4 +46,10 @@ public class PlayerLookAtController : MonoBehaviour
             lookAt = null;
         }
     }
+}
+
+public enum LookAtType
+{
+    Item,
+    ItemPit,
 }
