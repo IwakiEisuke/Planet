@@ -5,16 +5,16 @@ using UnityEngine.SceneManagement;
 public class LevelRestarter : MonoBehaviour
 {
     [SerializeField] InputAction restartAction;
-    [SerializeField] CheckPointManager checkPointManager;
+    [SerializeField] InputAction forceRestartAction;
 
     bool _IsGameOver;
 
     private void Start()
     {
-        print(checkPointManager.GetCheckPoint());
-
         restartAction.performed += RestartLevel;
+        forceRestartAction.performed += ForceRestartLevel;
         restartAction.Enable();
+        forceRestartAction.Enable();
 
         var player = FindAnyObjectByType<Player>();
         if (player)
@@ -30,6 +30,30 @@ public class LevelRestarter : MonoBehaviour
         if (_IsGameOver)
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            SceneManager.sceneLoaded += OnReload;
         }
+    }
+
+    public void ForceRestartLevel(InputAction.CallbackContext context)
+    {
+        if (!_IsGameOver)
+        {
+            _IsGameOver = true;
+            RestartLevel(context);
+        }
+    }
+
+    private void OnDisable()
+    {
+        restartAction.Disable();
+        forceRestartAction.Disable();
+    }
+
+    private void OnReload(Scene scene, LoadSceneMode mode)
+    {
+        var checkPointManager = FindAnyObjectByType<CheckPointManager>();
+        print(checkPointManager.GetCheckPoint());
+        FindAnyObjectByType<Player>().transform.position = checkPointManager.GetCheckPoint().transform.position;
+        SceneManager.sceneLoaded -= OnReload;
     }
 }

@@ -876,6 +876,23 @@ MonoBehaviour:
       m_Action: Restart
       m_Flags: 0
     m_Flags: 0
+  forceRestartAction:
+    m_Name: Force Restart
+    m_Type: 1
+    m_ExpectedControlType: Button
+    m_Id: 57e4d209-e8f5-4593-812a-c78e26a6b801
+    m_Processors: 
+    m_Interactions: Hold(pressPoint=1)
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: f33a617d-67ac-4926-ae5d-ac49fd9e0c77
+      m_Path: <Keyboard>/r
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Force Restart
+      m_Flags: 0
+    m_Flags: 0
   checkPointManager: {fileID: 384435738}
 --- !u!4 &853573466
 Transform:
