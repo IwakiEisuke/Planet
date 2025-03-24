@@ -226,15 +226,7 @@ public class Player : MonoBehaviour
         }
         else
         {
-            var itemRb = _item.GetComponent<Rigidbody2D>();
-            var layers = itemRb.excludeLayers.value;
-            layers &= ~LayerMask.GetMask("Player");
-            itemRb.excludeLayers = layers;
-
-            print("Drop " + _item.name);
-
-            _handJoint.connectedBody = null;
-            _item = null;
+            DropItem();
         }
     }
 
@@ -251,12 +243,8 @@ public class Player : MonoBehaviour
         if (_item)
         {
             var itemRb = _item.GetComponent<Rigidbody2D>();
-            var layers = itemRb.excludeLayers.value;
-            layers &= ~LayerMask.GetMask("Player");
-            itemRb.excludeLayers = layers;
 
-            _handJoint.connectedBody = null;
-            _item = null;
+            DropItem();
 
             var throwForce = _throwForce * new Vector2(Mathf.Cos(_throwAngle * Mathf.Deg2Rad), Mathf.Sin(_throwAngle * Mathf.Deg2Rad));
             Debug.DrawRay(transform.position, throwForce, Color.white, 10);
@@ -268,6 +256,28 @@ public class Player : MonoBehaviour
     {
         print("Eat");
 
+        if (_item)
+        {
+            if (_item.TryGetComponent<IEdible>(out var edible))
+            {
+                edible.Eat();
+                _handJoint.connectedBody = null;
+                _item = null;
+            }
+        }
+    }
+
+    void DropItem()
+    {
+        var itemRb = _item.GetComponent<Rigidbody2D>();
+        var layers = itemRb.excludeLayers.value;
+        layers &= ~LayerMask.GetMask("Player");
+        itemRb.excludeLayers = layers;
+
+        print("Drop " + _item.name);
+
+        _handJoint.connectedBody = null;
+        _item = null;
     }
 
     private void OnGUI()
