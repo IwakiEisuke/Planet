@@ -93,7 +93,6 @@ public class Player : MonoBehaviour
 
         if (inToxicField && !_isStopBreath)
         {
-            print("in toxic");
             if (!_health.Reduce(_toxicDamage * Time.deltaTime))
             {
                 _isDead = true;

@@ -2,15 +2,25 @@ using UnityEngine;
 
 public class CheckPoint : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [HideInInspector]
+    public CheckPointManager manager;
+    public int id;
+
+    private void Start()
     {
-        
+        manager = FindAnyObjectByType<CheckPointManager>();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void SetCheckPoint()
     {
-        
+        manager.SetCheckPoint(id);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if ((collision.gameObject.layer | LayerMask.GetMask("Player")) > 0)
+        {
+            SetCheckPoint();
+        }
     }
 }
