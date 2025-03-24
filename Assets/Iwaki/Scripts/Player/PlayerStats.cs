@@ -42,7 +42,7 @@ public class PlayerStats : MonoBehaviour
         IsRegenerate = false;
         _timeBeforeValueDecreased = 0;
 
-        if (_current < 0)
+        if (_current <= 0)
         {
             _current = 0;
             OnExhaustion?.Invoke();
