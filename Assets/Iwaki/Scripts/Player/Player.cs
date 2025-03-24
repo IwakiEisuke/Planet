@@ -250,27 +250,31 @@ public class Player : MonoBehaviour
             var hit = Physics2D.OverlapCircle(transform.position, _itemSearchRadius, _itemLayer.value);
             if (!hit) return;
 
-            var item = hit.GetComponentInParent<ItemBase>();
-
-            if (item.isBuried)
+            if (hit.GetComponentInParent<ItemBase>() is ItemBase item)
             {
-                item.Dig();
+                if (item.isBuried)
+                {
+                    item.Dig();
+                }
+
+                _item = item;
+
+                var itemRb = _item.GetComponent<Rigidbody2D>();
+                var layers = itemRb.excludeLayers.value;
+                layers |= LayerMask.GetMask("Player");
+                itemRb.excludeLayers = layers;
+
+                _handJoint.connectedBody = itemRb;
+                print("PickUp " + _item.name);
             }
-
-            _item = item;
-
-            var itemRb = _item.GetComponent<Rigidbody2D>();
-            var layers = itemRb.excludeLayers.value;
-            layers |= LayerMask.GetMask("Player");
-            itemRb.excludeLayers = layers;
-
-            _handJoint.connectedBody = itemRb;
-            print("PickUp " + _item.name);
+            else if (hit.TryGetComponent<ItemPit>(out var pit))
+            {
+                StartCoroutine(pit.Dig(1));
+            }
         }
         else if (_isCrouching)
         {
             DropItem();
-
         }
         else
         {

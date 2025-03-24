@@ -15,12 +15,6 @@ public class ItemPit : MonoBehaviour
         Destroy(gameObject);
     }
 
-    [ContextMenu("AAA")]
-    private void Test_Dig()
-    {
-        StartCoroutine(Dig(1));
-    }
-
     private void OnDrawGizmos()
     {
         var split = 32;
