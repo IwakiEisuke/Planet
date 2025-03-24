@@ -53,6 +53,7 @@ public class Player : MonoBehaviour
     bool _isHanging;
 
     public bool inToxicField;
+    bool _isStopBreath;
 
     readonly HashSet<Collider2D> _inContacts = new();
 
@@ -77,7 +78,7 @@ public class Player : MonoBehaviour
             _rb.linearVelocity = Vector2.zero;
         }
 
-        if (inToxicField)
+        if (inToxicField && !_isStopBreath)
         {
             print("in toxic");
         }
@@ -241,10 +242,18 @@ public class Player : MonoBehaviour
         }
     }
 
-    void OnBreathe(InputValue value)
+    void OnStopBreath()
     {
-        print("Breath");
+        print("StopBreath");
 
+        _isStopBreath = true;
+    }
+
+    void OnBreathe()
+    {
+        print("Breathe");
+
+        _isStopBreath = false;
     }
 
     void Throw()

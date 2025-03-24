@@ -33,12 +33,21 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "StopBreath",
+                    "type": "Button",
+                    "id": "1b968dc6-66e7-4dc0-8118-17c39639113f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "Hold",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Breathe",
                     "type": "Button",
                     "id": "641cd816-40e6-41b4-8c3d-04687c349290",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": "",
+                    "interactions": "Press(behavior=1)",
                     "initialStateCheck": false
                 },
                 {
@@ -287,6 +296,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "Eat",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d3a4cff5-dd8f-4192-9d0c-c2465dab19d5",
+                    "path": "<Keyboard>/leftShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "StopBreath",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
