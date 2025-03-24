@@ -52,6 +52,8 @@ public class Player : MonoBehaviour
     bool _isCrouching;
     bool _isHanging;
 
+    public bool inToxicField;
+
     readonly HashSet<Collider2D> _inContacts = new();
 
     private void Start()
@@ -73,6 +75,11 @@ public class Player : MonoBehaviour
         else
         {
             _rb.linearVelocity = Vector2.zero;
+        }
+
+        if (inToxicField)
+        {
+            print("in toxic");
         }
     }
 
