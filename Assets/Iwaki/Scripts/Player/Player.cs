@@ -212,11 +212,28 @@ public class Player : MonoBehaviour
             if (hit && hit.GetComponentInParent<ItemBase>() is ItemBase item)
             {
                 _item = item;
-                _handJoint.connectedBody = _item.GetComponent<Rigidbody2D>();
+                
+                var itemRb = _item.GetComponent<Rigidbody2D>();
+                var layers = itemRb.excludeLayers.value;
+                layers |= LayerMask.GetMask("Player");
+                itemRb.excludeLayers = layers;
+
+                _handJoint.connectedBody = itemRb;
                 print("PickUp " + _item.name);
             }
         }
+        else
+        {
+            var itemRb = _item.GetComponent<Rigidbody2D>();
+            var layers = itemRb.excludeLayers.value;
+            layers &= ~LayerMask.GetMask("Player");
+            itemRb.excludeLayers = layers;
 
+            print("Drop " + _item.name);
+
+            _handJoint.connectedBody = null;
+            _item = null;
+        }
     }
 
     void OnBreathe(InputValue value)
