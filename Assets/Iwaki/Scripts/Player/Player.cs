@@ -42,6 +42,8 @@ public class Player : MonoBehaviour
     [SerializeField] float _throwForce;
     [SerializeField] float _throwAngle;
 
+    public ItemBase HandItem => _item;
+
     [Header("Breath")]
     [SerializeField] float _consumeOxygenWhenStopBreath = 2;
     [SerializeField] float _toxicDamage = 5;
