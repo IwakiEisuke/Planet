@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -59,7 +60,11 @@ public class Player : MonoBehaviour
     public bool inToxicField;
     bool _isStopBreath;
 
+    bool _isDead;
+
     readonly HashSet<Collider2D> _inContacts = new();
+
+    public event Action OnDead;
 
     private void Start()
     {
@@ -71,6 +76,8 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
+        if (_isDead) return;
+
         if (!_isHanging)
         {
             IsHanging();
@@ -85,7 +92,12 @@ public class Player : MonoBehaviour
         if (inToxicField && !_isStopBreath)
         {
             print("in toxic");
-            _health.Reduce(_toxicDamage * Time.deltaTime);
+            if (!_health.Reduce(_toxicDamage * Time.deltaTime))
+            {
+                _isDead = true;
+                OnDead?.Invoke();
+                print("Dead");
+            }
         }
 
         if (_isStopBreath)
