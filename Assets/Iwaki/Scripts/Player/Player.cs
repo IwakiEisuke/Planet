@@ -96,6 +96,7 @@ public class Player : MonoBehaviour
             {
                 _isDead = true;
                 OnDead?.Invoke();
+                GetComponent<PlayerInput>().enabled = false;
                 print("Dead");
             }
         }
