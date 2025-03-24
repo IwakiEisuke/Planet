@@ -35,7 +35,9 @@ public class Player : MonoBehaviour
 
     [Header("Item")]
     [SerializeField] ItemBase _item;
-    [SerializeField] ContactFilter2D _contactFilter;
+    [SerializeField] float _itemSearchRadius = 1f;
+    [SerializeField] LayerMask _itemLayer;
+    [SerializeField] Joint2D _handJoint;
 
     Rigidbody2D _rb;
 
@@ -203,16 +205,18 @@ public class Player : MonoBehaviour
     {
         print("Interact");
 
-        if (_item != null)
+        if (_item == null)
         {
-            var hit = Physics2D.OverlapCircle(transform.position, 2);
-            if (hit)
+            var hit = Physics2D.OverlapCircle(transform.position, _itemSearchRadius, _itemLayer.value);
+
+            if (hit && hit.GetComponentInParent<ItemBase>() is ItemBase item)
             {
-                _item = hit.GetComponentInParent<ItemBase>();
+                _item = item;
+                _handJoint.connectedBody = _item.GetComponent<Rigidbody2D>();
                 print("PickUp " + _item.name);
             }
         }
-        
+
     }
 
     void OnBreathe(InputValue value)
