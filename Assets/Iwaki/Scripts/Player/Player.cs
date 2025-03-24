@@ -41,6 +41,10 @@ public class Player : MonoBehaviour
     [SerializeField] float _throwForce;
     [SerializeField] float _throwAngle;
 
+    [Header("Breath")]
+    [SerializeField] float _consumeOxygenWhenStopBreath = 2;
+    [SerializeField] float _toxicDamage = 5;
+
     Rigidbody2D _rb;
 
     float _currentSpeed;
@@ -81,6 +85,12 @@ public class Player : MonoBehaviour
         if (inToxicField && !_isStopBreath)
         {
             print("in toxic");
+            _health.Value -= _toxicDamage;
+        }
+
+        if (_isStopBreath)
+        {
+            _oxygen.Value -= _consumeOxygenWhenStopBreath * Time.deltaTime;
         }
     }
 
