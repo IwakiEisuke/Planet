@@ -85,12 +85,15 @@ public class Player : MonoBehaviour
         if (inToxicField && !_isStopBreath)
         {
             print("in toxic");
-            _health.Value -= _toxicDamage;
+            _health.Reduce(_toxicDamage * Time.deltaTime);
         }
 
         if (_isStopBreath)
         {
-            _oxygen.Value -= _consumeOxygenWhenStopBreath * Time.deltaTime;
+            if (!_oxygen.Reduce(_consumeOxygenWhenStopBreath * Time.deltaTime))
+            {
+                _isStopBreath = false;
+            }
         }
     }
 
@@ -182,14 +185,18 @@ public class Player : MonoBehaviour
         if (_isCrouching)
         {
             // HeadSliding
-            var angle = slidingAngle * Mathf.Deg2Rad;
-            _rb.linearVelocity = new Vector2(_forwardDirection * slidingSpeed * Mathf.Cos(angle), slidingSpeed * Mathf.Sin(angle));
-            _oxygen.Value -= 2.5f;
+            if (_oxygen.Reduce(2.5f))
+            {
+                var angle = slidingAngle * Mathf.Deg2Rad;
+                _rb.linearVelocity = new Vector2(_forwardDirection * slidingSpeed * Mathf.Cos(angle), slidingSpeed * Mathf.Sin(angle));
+            }
         }
         else
         {
-            _rb.linearVelocityY = Mathf.Sqrt(2 * Mathf.Abs(Physics.gravity.y) * jumpHeight);
-            _oxygen.Value -= 1.6f;
+            if (_oxygen.Reduce(1.6f))
+            {
+                _rb.linearVelocityY = Mathf.Sqrt(2 * Mathf.Abs(Physics.gravity.y) * jumpHeight);
+            }
         }
     }
 

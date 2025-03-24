@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class PlayerStats : MonoBehaviour
@@ -10,21 +11,9 @@ public class PlayerStats : MonoBehaviour
     float _current;
     float _timeBeforeValueDecreased;
 
-    public bool IsRegenerate { get; set; }
-    public float Value
-    {
-        get => _current;
-        set
-        {
-            if (value - _current < 0)
-            {
-                IsRegenerate = false;
-                _timeBeforeValueDecreased = 0;
-            }
+    public event Action OnExhaustion;
 
-            _current = Mathf.Min(value, max);
-        }
-    }
+    public bool IsRegenerate { get; set; }
 
     private void Start()
     {
@@ -36,6 +25,33 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
+    public void Add(float value)
+    {
+        _current += value;
+
+        if (_current > max)
+        {
+            _current = max;
+        }
+    }
+
+    public bool Reduce(float value)
+    {
+        _current -= value;
+
+        IsRegenerate = false;
+        _timeBeforeValueDecreased = 0;
+
+        if (_current < 0)
+        {
+            _current = 0;
+            OnExhaustion?.Invoke();
+            return false;
+        }
+
+        return true;
+    }
+
     public void Update()
     {
         if (canRegenerate)
@@ -44,7 +60,7 @@ public class PlayerStats : MonoBehaviour
 
             if (IsRegenerate && _current < max)
             {
-                Value += regeneration * Time.deltaTime;
+                Add(regeneration * Time.deltaTime);
             }
             else if (_timeBeforeValueDecreased > restartRegen)
             {
