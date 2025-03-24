@@ -38,6 +38,8 @@ public class Player : MonoBehaviour
     [SerializeField] float _itemSearchRadius = 1f;
     [SerializeField] LayerMask _itemLayer;
     [SerializeField] Joint2D _handJoint;
+    [SerializeField] float _throwForce;
+    [SerializeField] float _throwAngle;
 
     Rigidbody2D _rb;
 
@@ -212,7 +214,7 @@ public class Player : MonoBehaviour
             if (hit && hit.GetComponentInParent<ItemBase>() is ItemBase item)
             {
                 _item = item;
-                
+
                 var itemRb = _item.GetComponent<Rigidbody2D>();
                 var layers = itemRb.excludeLayers.value;
                 layers |= LayerMask.GetMask("Player");
@@ -245,6 +247,21 @@ public class Player : MonoBehaviour
     void OnThrow(InputValue value)
     {
         print("Throw");
+
+        if (_item)
+        {
+            var itemRb = _item.GetComponent<Rigidbody2D>();
+            var layers = itemRb.excludeLayers.value;
+            layers &= ~LayerMask.GetMask("Player");
+            itemRb.excludeLayers = layers;
+
+            _handJoint.connectedBody = null;
+            _item = null;
+
+            var throwForce = _throwForce * new Vector2(Mathf.Cos(_throwAngle * Mathf.Deg2Rad), Mathf.Sin(_throwAngle * Mathf.Deg2Rad));
+            Debug.DrawRay(transform.position, throwForce, Color.white, 10);
+            itemRb.AddForce(throwForce);
+        }
     }
 
     void OnEat(InputValue value)
