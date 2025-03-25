@@ -70,6 +70,7 @@ public class Player : MonoBehaviour
 
     Vector2 _input;
     bool _isGrounded;
+    bool _isHalfGrounded;
     bool _isCrouching;
     bool _isHanging;
     bool _isSliding;
@@ -216,6 +217,7 @@ public class Player : MonoBehaviour
             _isGrounded = isGrounded;
         }
 
+        _isHalfGrounded = existFloor;
         _inContacts.Add(collision.collider);
     }
 
@@ -240,7 +242,8 @@ public class Player : MonoBehaviour
             _isHanging = false;
             _rb.bodyType = RigidbodyType2D.Dynamic;
         }
-        else if (!_isGrounded) return;
+
+        if (!_isHalfGrounded) return;
 
         if (_isCrouching)
         {
@@ -257,7 +260,14 @@ public class Player : MonoBehaviour
         {
             if (_oxygen.Reduce(1.6f))
             {
-                _rb.linearVelocityY = Mathf.Sqrt(2 * Mathf.Abs(Physics.gravity.y) * jumpHeight);
+                if (_isGrounded)
+                {
+                    _rb.linearVelocityY = Mathf.Sqrt(2 * Mathf.Abs(Physics.gravity.y) * jumpHeight);
+                }
+                else
+                {
+                    _rb.linearVelocity = Quaternion.FromToRotation(Vector2.up, _groundNormal) * Vector2.up * Mathf.Sqrt(2 * Mathf.Abs(Physics.gravity.y) * (jumpHeight / 2));
+                }
             }
         }
     }
