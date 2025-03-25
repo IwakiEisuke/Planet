@@ -42,6 +42,7 @@ public class Player : MonoBehaviour
     [Header("Sliding")]
     [SerializeField] float slidingSpeed = 10;
     [SerializeField] float slidingAngle = 30;
+    [SerializeField] float cancelSlidingSpeed = 1f;
 
     [Header("Physics")]
     [SerializeField] float walkingFriction = 0.5f;
@@ -112,6 +113,11 @@ public class Player : MonoBehaviour
         if (Mathf.Abs(_input.x) > 0 && !_isCrouching)
         {
             playerDirectionRaw = _input.x > 0 ? 1 : -1;
+        }
+
+        if (_isSliding && Mathf.Abs(_rb.linearVelocityX) < cancelSlidingSpeed)
+        {
+            _isSliding = false;
         }
 
         if (!_canGrounded)

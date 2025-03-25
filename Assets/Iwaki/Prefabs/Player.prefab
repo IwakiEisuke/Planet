@@ -466,9 +466,11 @@ MonoBehaviour:
   minGroundedRateAngle: 20
   maxGroundedRateAngle: 60
   circleRadius: 0.25
+  groundedCooldown: 0.1
   crouchSpeed: 2.5
   slidingSpeed: 10
   slidingAngle: 20
+  cancelSlidingSpeed: 1
   walkingFriction: 0
   slidingFriction: 0
   _ledgeHangingOrigin: {x: 0, y: 0.3}
