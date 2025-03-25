@@ -15,6 +15,7 @@ public class Player : MonoBehaviour
     [SerializeField] float directionMinZ = -0.05f;
     [SerializeField] Transform playerDirectionTransform;
     [SerializeField] float playerDirection = 0;
+    [SerializeField] float turnSpeed = 6;
     float playerDirectionRaw = 0;
     private float PlayerDirectionNormalized { get => (playerDirectionTransform.position - transform.position).x / directionDistance; }
 
@@ -108,7 +109,7 @@ public class Player : MonoBehaviour
 
         if (!_isHanging)
         {
-            playerDirection = Mathf.MoveTowards(playerDirection, playerDirectionRaw, walkSpeed * Time.deltaTime);
+            playerDirection = Mathf.MoveTowards(playerDirection, playerDirectionRaw, turnSpeed * Time.deltaTime);
         }
 
         if (!_isHanging)
@@ -224,7 +225,6 @@ public class Player : MonoBehaviour
             }
 
             _groundedRate = Mathf.Clamp01(1 - ((Mathf.Acos(Vector2.Dot(Vector2.up, contact.normal)) * Mathf.Rad2Deg - minGroundedRateAngle) / (maxGroundedRateAngle - minGroundedRateAngle)));
-            print(_groundedRate);
         }
 
         if (existFloor)

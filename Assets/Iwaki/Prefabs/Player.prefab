@@ -48,6 +48,7 @@ MonoBehaviour:
   regeneration: 2
   restartRegen: 1.2
   canRegenerate: 1
+  successWhenExhausted: 1
 --- !u!1 &553714195069384700
 GameObject:
   m_ObjectHideFlags: 0
@@ -455,19 +456,22 @@ MonoBehaviour:
   directionMinZ: -0.05
   playerDirectionTransform: {fileID: 7920471181925036465}
   playerDirection: 0
+  turnSpeed: 8
   jumpHeight: 4
   groundedLayer:
     serializedVersion: 2
     m_Bits: 55
   rayDistance: 1
   canGroundedAngle: 45
+  minGroundedRateAngle: 20
+  maxGroundedRateAngle: 60
   circleRadius: 0.25
   crouchSpeed: 2.5
   slidingSpeed: 10
   slidingAngle: 20
-  walkingFriction: 0.8
+  walkingFriction: 0
   slidingFriction: 0
-  _ledgeHangingOrigin: {x: 0, y: 0.5}
+  _ledgeHangingOrigin: {x: 0, y: 0.3}
   _ledgeHangingWidth: 0.5
   _ledgeHangingHeight: 0.4
   _oxygen: {fileID: 6055472501585769541}
@@ -1010,6 +1014,7 @@ MonoBehaviour:
   regeneration: 2
   restartRegen: 1.2
   canRegenerate: 0
+  successWhenExhausted: 0
 --- !u!1 &7689586740477533803
 GameObject:
   m_ObjectHideFlags: 0
