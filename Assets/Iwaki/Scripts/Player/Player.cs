@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor.Search;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -33,6 +34,10 @@ public class Player : MonoBehaviour
     [SerializeField] float slidingSpeed = 10;
     [SerializeField] float slidingAngle = 30;
 
+    [Header("Physics")]
+    [SerializeField] float walkingFriction = 0.5f;
+    [SerializeField] float slidingFriction = 1f;
+
     [Header("Hanging")]
     [SerializeField] Vector2 _ledgeHangingOrigin = new(0, 0.5f);
     [SerializeField] float _ledgeHangingWidth = 0.5f;
@@ -65,6 +70,7 @@ public class Player : MonoBehaviour
     bool _isGrounded;
     bool _isCrouching;
     bool _isHanging;
+    bool _isSliding;
 
     public bool inToxicField;
     bool _isStopBreath;
@@ -96,7 +102,11 @@ public class Player : MonoBehaviour
         {
             IsHanging();
             UpdateSpeed();
-            _rb.linearVelocityX = Mathf.MoveTowards(_rb.linearVelocityX, _input.x * _currentSpeed, _currentAccel * Time.deltaTime);
+
+            if (!_isSliding)
+            {
+                _rb.linearVelocityX = Mathf.MoveTowards(_rb.linearVelocityX, _input.x * _currentSpeed, _currentAccel * Time.deltaTime);
+            }
 
             var leftDirection = new Vector3(-directionDistance, 0, directionMinZ);
             var rightDirection = new Vector3(directionDistance, 0, directionMinZ);
@@ -220,6 +230,8 @@ public class Player : MonoBehaviour
             {
                 var angle = slidingAngle * Mathf.Deg2Rad;
                 _rb.linearVelocity = new Vector2(playerDirectionRaw * slidingSpeed * Mathf.Cos(angle), slidingSpeed * Mathf.Sin(angle));
+                _rb.sharedMaterial.friction = slidingFriction;
+                _isSliding = true;
             }
         }
         else
@@ -236,6 +248,12 @@ public class Player : MonoBehaviour
         print("Crouch");
 
         _isCrouching = value.isPressed;
+
+        if (!_isCrouching)
+        {
+            _rb.sharedMaterial.friction = walkingFriction;
+            _isSliding = false;
+        }
     }
 
     void UpdateSpeed()
@@ -368,6 +386,8 @@ public class Player : MonoBehaviour
         GUILayout.BeginVertical();
         GUILayout.Label($"_isGrounded {_isGrounded}", style);
         GUILayout.Label($"_isCrouching {_isCrouching}", style);
+        GUILayout.Label($"{nameof(_isSliding)} {_isSliding}", style);
+        GUILayout.Label($"friction {_rb.sharedMaterial.friction}", style);
 
         foreach (var c in _inContacts)
         {
