@@ -10,6 +10,11 @@ public class Player : MonoBehaviour
     [SerializeField] float accel = 20;
     [SerializeField] float airAccel = 5;
 
+    [SerializeField] float directionTargetMaxDistance = 5;
+    [SerializeField] Transform playerDirectionTarget;
+
+    private float PlayerDirectionNormalized { get => (playerDirectionTarget.position - transform.position).x / directionTargetMaxDistance; }
+
     [Header("Jump")]
     [SerializeField] float jumpHeight = 2;
 
@@ -54,7 +59,6 @@ public class Player : MonoBehaviour
     float _currentAccel;
 
     Vector2 _input;
-    float _forwardDirection = 1;
     bool _isGrounded;
     bool _isCrouching;
     bool _isHanging;
@@ -85,6 +89,7 @@ public class Player : MonoBehaviour
             IsHanging();
             UpdateSpeed();
             _rb.linearVelocityX = Mathf.MoveTowards(_rb.linearVelocityX, _input.x * _currentSpeed, _currentAccel * Time.deltaTime);
+            playerDirectionTarget.localPosition = new Vector2(_rb.linearVelocityX / walkSpeed * directionTargetMaxDistance, 0);
         }
         else
         {
@@ -117,9 +122,9 @@ public class Player : MonoBehaviour
         if (_rb.linearVelocityY > 0) return;
 
         var origin = _ledgeHangingOrigin + (Vector2)transform.position;
-        var crossPoint = new Vector2(origin.x + _ledgeHangingWidth * _forwardDirection, origin.y);
+        var crossPoint = new Vector2(origin.x + _ledgeHangingWidth * PlayerDirectionNormalized, origin.y);
 
-        var wallHit = Physics2D.Raycast(origin, Vector2.right * _forwardDirection, _ledgeHangingWidth, groundedLayer.value);
+        var wallHit = Physics2D.Raycast(origin, Vector2.right * PlayerDirectionNormalized, _ledgeHangingWidth, groundedLayer.value);
         var floorHit = Physics2D.Raycast(crossPoint + Vector2.up * _ledgeHangingHeight, Vector2.down, _ledgeHangingHeight, groundedLayer.value);
 
         if (floorHit.distance > 0.01f && wallHit.collider && floorHit.collider)
@@ -179,11 +184,6 @@ public class Player : MonoBehaviour
         print("Move");
 
         _input = value.Get<Vector2>();
-
-        if (Mathf.Abs(_input.x) > 0)
-        {
-            _forwardDirection = _input.x > 0 ? 1 : -1;
-        }
     }
 
     void OnJump(InputValue value)
@@ -203,7 +203,7 @@ public class Player : MonoBehaviour
             if (_oxygen.Reduce(2.5f))
             {
                 var angle = slidingAngle * Mathf.Deg2Rad;
-                _rb.linearVelocity = new Vector2(_forwardDirection * slidingSpeed * Mathf.Cos(angle), slidingSpeed * Mathf.Sin(angle));
+                _rb.linearVelocity = new Vector2(PlayerDirectionNormalized * slidingSpeed * Mathf.Cos(angle), slidingSpeed * Mathf.Sin(angle));
             }
         }
         else
@@ -363,7 +363,7 @@ public class Player : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        var dir = _forwardDirection >= 0 ? 1 : -1;
+        var dir = PlayerDirectionNormalized;
 
         var origin = _ledgeHangingOrigin + (Vector2)transform.position;
         var crossPoint = new Vector2(origin.x + _ledgeHangingWidth * dir, origin.y);
