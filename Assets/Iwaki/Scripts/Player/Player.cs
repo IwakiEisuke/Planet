@@ -66,6 +66,7 @@ public class Player : MonoBehaviour
     [Header("Breath")]
     [SerializeField] float _consumeOxygenWhenStopBreath = 2;
     [SerializeField] float _toxicDamage = 5;
+    [SerializeField] float _breathValue = 1;
 
     Rigidbody2D _rb;
 
@@ -384,6 +385,8 @@ public class Player : MonoBehaviour
     void OnBreathe()
     {
         print("Breathe");
+
+        _oxygen.Add(_breathValue);
 
         _isStopBreath = false;
     }

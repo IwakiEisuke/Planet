@@ -173,7 +173,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bar: {fileID: 3655563273469488497}
   stats: {fileID: 826364453593877429}
-  barSpeed: 0.5
+  barSpeed: 10
 --- !u!1 &880143841911940255
 GameObject:
   m_ObjectHideFlags: 0
@@ -456,7 +456,7 @@ MonoBehaviour:
   directionMinZ: -0.05
   playerDirectionTransform: {fileID: 7920471181925036465}
   playerDirection: 0
-  turnSpeed: 8
+  turnSpeed: 3
   jumpHeight: 4
   groundedLayer:
     serializedVersion: 2
@@ -486,6 +486,7 @@ MonoBehaviour:
   _throwAngle: 10
   _consumeOxygenWhenStopBreath: 2
   _toxicDamage: 5
+  _breathValue: 1
   inToxicField: 0
 --- !u!50 &6480737533959019554
 Rigidbody2D:
@@ -693,7 +694,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bar: {fileID: 5328956228205630677}
   stats: {fileID: 6055472501585769541}
-  barSpeed: 0.5
+  barSpeed: 10
 --- !u!1 &4116827798990594820
 GameObject:
   m_ObjectHideFlags: 0
