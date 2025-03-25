@@ -21,12 +21,15 @@ public class Player : MonoBehaviour
     [Header("Jump")]
     [SerializeField] float jumpHeight = 2;
 
-    Vector2 _groundNormal = Vector2.up;
+    Vector2 _recentGroundNormal = Vector2.up;
+    float _groundedRate;
 
     [Header("Check Grounded")]
     [SerializeField] LayerMask groundedLayer;
     [SerializeField] float rayDistance = 1;
     [SerializeField] float canGroundedAngle = 45;
+    [SerializeField] float minGroundedRateAngle = 30;
+    [SerializeField] float maxGroundedRateAngle = 60;
     [SerializeField] float circleRadius = 0.5f;
 
     [Header("Crouch")]
@@ -189,6 +192,7 @@ public class Player : MonoBehaviour
         if (_inContacts.Count == 0)
         {
             _isGrounded = false;
+            _isHalfGrounded = false;
         }
     }
 
@@ -205,13 +209,17 @@ public class Player : MonoBehaviour
             else
             {
                 existFloor = true;
+                _recentGroundNormal = contact.normal;
+                Debug.DrawRay(contact.point, contact.normal, Color.blue);
             }
 
             if (Vector2.Dot(Vector2.up, contact.normal) >= Mathf.Cos(canGroundedAngle * Mathf.Deg2Rad))
             {
                 isGrounded = true;
-                _groundNormal = contact.normal;
             }
+
+            _groundedRate = Mathf.Clamp01(1 - ((Mathf.Acos(Vector2.Dot(Vector2.up, contact.normal)) * Mathf.Rad2Deg - minGroundedRateAngle) / (maxGroundedRateAngle - minGroundedRateAngle)));
+            print(_groundedRate);
         }
 
         if (existFloor)
@@ -239,13 +247,7 @@ public class Player : MonoBehaviour
     {
         print("Jump");
 
-        if (_isHanging)
-        {
-            _isHanging = false;
-            _rb.bodyType = RigidbodyType2D.Dynamic;
-        }
-
-        if (!_isHalfGrounded) return;
+        if (!_isHanging && !_isHalfGrounded) return;
 
         if (_isCrouching)
         {
@@ -262,15 +264,26 @@ public class Player : MonoBehaviour
         {
             if (_oxygen.Reduce(1.6f))
             {
-                if (_isGrounded)
+                Vector2 jumpVel;
+
+                if (_isHanging)
                 {
-                    _rb.linearVelocityY = Mathf.Sqrt(2 * Mathf.Abs(Physics.gravity.y) * jumpHeight);
+                    jumpVel = Vector2.up * Mathf.Sqrt(2 * Mathf.Abs(Physics.gravity.y) * jumpHeight);
                 }
                 else
                 {
-                    _rb.linearVelocity = Quaternion.FromToRotation(Vector2.up, _groundNormal) * Vector2.up * Mathf.Sqrt(2 * Mathf.Abs(Physics.gravity.y) * (jumpHeight / 2));
+                    jumpVel = Vector3.Slerp(_recentGroundNormal, Vector2.up, _groundedRate) * Mathf.Sqrt(2 * Mathf.Abs(Physics.gravity.y) * (jumpHeight * Mathf.Clamp01(0.7f + _groundedRate)));
                 }
+
+                _rb.linearVelocityX += jumpVel.x;
+                _rb.linearVelocityY = jumpVel.y;
             }
+        }
+
+        if (_isHanging)
+        {
+            _rb.bodyType = RigidbodyType2D.Dynamic;
+            _isHanging = false;
         }
     }
 
@@ -416,9 +429,11 @@ public class Player : MonoBehaviour
 
         GUILayout.BeginVertical();
         GUILayout.Label($"_isGrounded {_isGrounded}", style);
+        GUILayout.Label($"_isHalfGrounded {_isHalfGrounded}", style);
         GUILayout.Label($"_isCrouching {_isCrouching}", style);
-        GUILayout.Label($"{nameof(_isSliding)} {_isSliding}", style);
+        GUILayout.Label($"_isSliding {_isSliding}", style);
         GUILayout.Label($"friction {_rb.sharedMaterial.friction}", style);
+        GUILayout.Label($"_groundedRate {_groundedRate}", style);
 
         foreach (var c in _inContacts)
         {
