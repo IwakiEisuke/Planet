@@ -22,9 +22,6 @@ public class Player : MonoBehaviour
     [Header("Jump")]
     [SerializeField] float jumpHeight = 2;
 
-    Vector2 _recentGroundNormal = Vector2.up;
-    float _groundedRate;
-
     [Header("Check Grounded")]
     [SerializeField] LayerMask groundedLayer;
     [SerializeField] float rayDistance = 1;
@@ -32,6 +29,12 @@ public class Player : MonoBehaviour
     [SerializeField] float minGroundedRateAngle = 30;
     [SerializeField] float maxGroundedRateAngle = 60;
     [SerializeField] float circleRadius = 0.5f;
+    [SerializeField] float groundedCooldown = 0.1f;
+
+    Vector2 _recentGroundNormal = Vector2.up;
+    float _groundedRate;
+    float _groundedTimer;
+    bool _canGrounded = true;
 
     [Header("Crouch")]
     [SerializeField] float crouchSpeed = 2.5f;
@@ -111,6 +114,15 @@ public class Player : MonoBehaviour
             playerDirectionRaw = _input.x > 0 ? 1 : -1;
         }
 
+        if (!_canGrounded)
+        {
+            _groundedTimer -= Time.deltaTime;
+            if (_groundedTimer <= 0)
+            {
+                _canGrounded = true;
+            }
+        }
+
         if (!_canHanging)
         {
             _hangingRestoreTimer -= Time.deltaTime;
@@ -149,8 +161,20 @@ public class Player : MonoBehaviour
                     _rb.linearVelocityX = Mathf.MoveTowards(_rb.linearVelocityX, _input.x * _targetSpeed, _currentAccel * Time.deltaTime);
                 }
             }
+            else if (_isGrounded)
+            {
+                var hit = Physics2D.CircleCast(transform.position, circleRadius, Vector2.down, 5, groundedLayer.value);
+                var dir = Quaternion.FromToRotation(Vector2.up, hit.normal) * (Vector2.right * playerDirectionRaw);
 
-            var leftDirection = new Vector3(-directionDistance, 0, directionMinZ);
+                var targetVel = _rb.linearVelocity.magnitude * dir;
+
+                _rb.linearVelocityY = targetVel.y;
+                _rb.linearVelocity = targetVel;
+
+                Debug.DrawRay(hit.point, dir, Color.yellow);
+            }
+
+                var leftDirection = new Vector3(-directionDistance, 0, directionMinZ);
             var rightDirection = new Vector3(directionDistance, 0, directionMinZ);
 
             playerDirectionTransform.localPosition = Vector3.Slerp(leftDirection, rightDirection, (playerDirection + 1) / 2);
@@ -239,6 +263,8 @@ public class Player : MonoBehaviour
 
     void IsGrounded(Collision2D collision)
     {
+        if (!_canGrounded) return;
+
         var existFloor = false;
         var isGrounded = false;
         foreach (var contact in collision.contacts)
@@ -293,6 +319,11 @@ public class Player : MonoBehaviour
                 _rb.linearVelocity = new Vector2(playerDirectionRaw * slidingSpeed * Mathf.Cos(angle), slidingSpeed * Mathf.Sin(angle));
                 _rb.sharedMaterial.friction = slidingFriction;
                 _isSliding = true;
+
+                _groundedTimer = groundedCooldown;
+                _canGrounded = false;
+
+                _isGrounded = false;
             }
         }
         else
