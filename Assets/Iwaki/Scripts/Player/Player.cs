@@ -21,6 +21,8 @@ public class Player : MonoBehaviour
     [Header("Jump")]
     [SerializeField] float jumpHeight = 2;
 
+    Vector2 _groundNormal = Vector2.up;
+
     [Header("Check Grounded")]
     [SerializeField] LayerMask groundedLayer;
     [SerializeField] float rayDistance = 1;
@@ -189,25 +191,32 @@ public class Player : MonoBehaviour
 
     void IsGrounded(Collision2D collision)
     {
-        // Ç±ÇÍÇ¢ÇÈÅH
-        //var hit = Physics2D.Raycast(transform.position, Vector2.down, rayDistance, groundedLayer.value);
-        //print("Hit: " + hit.collider.name);
-
-        //if (hit.collider == null)
-        //{
-        //    _isGrounded = false;
-        //    return;
-        //}
-
-        _inContacts.Add(collision.collider);
-
+        var existFloor = false;
+        var isGrounded = false;
         foreach (var contact in collision.contacts)
         {
+            if (contact.normal.y < 0)
+            {
+                continue;
+            }
+            else
+            {
+                existFloor = true;
+            }
+
             if (Vector2.Dot(Vector2.up, contact.normal) >= Mathf.Cos(canGroundedAngle * Mathf.Deg2Rad))
             {
-                _isGrounded = true;
+                isGrounded = true;
+                _groundNormal = contact.normal;
             }
         }
+
+        if (existFloor)
+        {
+            _isGrounded = isGrounded;
+        }
+
+        _inContacts.Add(collision.collider);
     }
 
     void OnMove(InputValue value)

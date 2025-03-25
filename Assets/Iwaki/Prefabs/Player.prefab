@@ -448,8 +448,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7203926c5873e444aa98f100a3c20bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkSpeed: 5
-  accel: 20
+  walkSpeed: 4
+  accel: 30
   airAccel: 10
   directionDistance: 5
   directionMinZ: -0.05
@@ -461,6 +461,7 @@ MonoBehaviour:
     m_Bits: 55
   rayDistance: 1
   canGroundedAngle: 45
+  circleRadius: 0.25
   crouchSpeed: 2.5
   slidingSpeed: 10
   slidingAngle: 20
