@@ -48,6 +48,9 @@ public class Player : MonoBehaviour
     [SerializeField] Vector2 _ledgeHangingOrigin = new(0, 0.5f);
     [SerializeField] float _ledgeHangingWidth = 0.5f;
     [SerializeField] float _ledgeHangingHeight = 0.2f;
+    [SerializeField] float _hangingCooldown = 0.3f;
+    bool _canHanging;
+    float _hangingRestoreTimer;
 
     [Header("Stats")]
     [SerializeField] PlayerStats _oxygen;
@@ -106,6 +109,15 @@ public class Player : MonoBehaviour
         if (Mathf.Abs(_input.x) > 0 && !_isCrouching)
         {
             playerDirectionRaw = _input.x > 0 ? 1 : -1;
+        }
+
+        if (!_canHanging)
+        {
+            _hangingRestoreTimer -= Time.deltaTime;
+            if (_hangingRestoreTimer <= 0)
+            {
+                _canHanging = true;
+            }
         }
 
         if (!_isHanging)
@@ -170,6 +182,8 @@ public class Player : MonoBehaviour
 
     void IsHanging()
     {
+        if (!_canHanging) return;
+
         if (_rb.linearVelocityY > 0) return;
 
         var origin = _ledgeHangingOrigin + (Vector2)transform.position;
@@ -192,6 +206,14 @@ public class Player : MonoBehaviour
             playerDirectionTransform.localPosition = Vector3.Slerp(leftDirection, rightDirection, (playerDirectionRaw + 1) / 2);
             playerDirection = playerDirectionRaw;
         }
+    }
+
+    void UnHanging()
+    {
+        _rb.bodyType = RigidbodyType2D.Dynamic;
+        _isHanging = false;
+        _canHanging = false;
+        _hangingRestoreTimer = _hangingCooldown;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -262,7 +284,7 @@ public class Player : MonoBehaviour
 
         if (!_isHanging && !_isHalfGrounded) return;
 
-        if (_isCrouching)
+        if (_isCrouching && !_isHanging)
         {
             // HeadSliding
             if (_oxygen.Reduce(2.5f))
@@ -297,12 +319,6 @@ public class Player : MonoBehaviour
         {
             UnHanging();
         }
-    }
-
-    void UnHanging()
-    {
-        _rb.bodyType = RigidbodyType2D.Dynamic;
-        _isHanging = false;
     }
 
     void OnCrouch(InputValue value)

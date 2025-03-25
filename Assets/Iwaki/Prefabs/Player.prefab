@@ -456,7 +456,7 @@ MonoBehaviour:
   directionMinZ: -0.05
   playerDirectionTransform: {fileID: 7920471181925036465}
   playerDirection: 0
-  turnSpeed: 3
+  turnSpeed: 8
   jumpHeight: 4
   groundedLayer:
     serializedVersion: 2
@@ -474,6 +474,7 @@ MonoBehaviour:
   _ledgeHangingOrigin: {x: 0, y: 0.3}
   _ledgeHangingWidth: 0.5
   _ledgeHangingHeight: 0.4
+  _hangingCooldown: 0.3
   _oxygen: {fileID: 6055472501585769541}
   _health: {fileID: 826364453593877429}
   _item: {fileID: 0}
