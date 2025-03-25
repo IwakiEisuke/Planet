@@ -87,7 +87,10 @@ public class Player : MonoBehaviour
     {
         if (_isDead) return;
 
-        playerDirection = Mathf.MoveTowards(playerDirection, playerDirectionRaw, walkSpeed * Time.deltaTime);
+        if (!_isHanging && !_isCrouching)
+        {
+            playerDirection = Mathf.MoveTowards(playerDirection, playerDirectionRaw, walkSpeed * Time.deltaTime);
+        }
 
         if (!_isHanging)
         {
@@ -193,7 +196,7 @@ public class Player : MonoBehaviour
 
         _input = value.Get<Vector2>();
 
-        if (!_isCrouching && Mathf.Abs(_input.x) > 0)
+        if (Mathf.Abs(_input.x) > 0)
         {
             playerDirectionRaw = _input.x > 0 ? 1 : -1;
         }
