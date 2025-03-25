@@ -109,6 +109,11 @@ public class Player : MonoBehaviour
 
         if (!_isHanging)
         {
+            IsHanging();
+        }
+
+        if (!_isHanging)
+        {
             playerDirection = Mathf.MoveTowards(playerDirection, playerDirectionRaw, turnSpeed * Time.deltaTime);
         }
 
@@ -178,6 +183,13 @@ public class Player : MonoBehaviour
             _isHanging = true;
             _rb.linearVelocity = Vector2.zero;
             _rb.bodyType = RigidbodyType2D.Kinematic;
+
+            var leftDirection = new Vector3(-directionDistance, 0, directionMinZ);
+            var rightDirection = new Vector3(directionDistance, 0, directionMinZ);
+
+            playerDirectionRaw = (playerDirection > 0 ? 1 : -1);
+            playerDirectionTransform.localPosition = Vector3.Slerp(leftDirection, rightDirection, (playerDirectionRaw + 1) / 2);
+            playerDirection = playerDirectionRaw;
         }
     }
 
