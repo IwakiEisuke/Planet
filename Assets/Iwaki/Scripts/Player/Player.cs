@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using UnityEditor.Search;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -26,6 +25,7 @@ public class Player : MonoBehaviour
     [SerializeField] LayerMask groundedLayer;
     [SerializeField] float rayDistance = 1;
     [SerializeField] float canGroundedAngle = 45;
+    [SerializeField] float circleRadius = 0.5f;
 
     [Header("Crouch")]
     [SerializeField] float crouchSpeed = 2.5f;
@@ -63,7 +63,7 @@ public class Player : MonoBehaviour
 
     Rigidbody2D _rb;
 
-    float _currentSpeed;
+    float _targetSpeed;
     float _currentAccel;
 
     Vector2 _input;
@@ -85,7 +85,7 @@ public class Player : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody2D>();
 
-        _currentSpeed = walkSpeed;
+        _targetSpeed = walkSpeed;
         _currentAccel = accel;
     }
 
@@ -105,7 +105,17 @@ public class Player : MonoBehaviour
 
             if (!_isSliding)
             {
-                _rb.linearVelocityX = Mathf.MoveTowards(_rb.linearVelocityX, _input.x * _currentSpeed, _currentAccel * Time.deltaTime);
+                if (_isGrounded)
+                {
+                    var hit = Physics2D.CircleCast(transform.position, circleRadius, Vector2.down, 5, groundedLayer.value);
+                    var dir = Quaternion.FromToRotation(Vector2.up, hit.normal) * (Vector2.right * _input.x);
+                    _rb.linearVelocity = Vector2.MoveTowards(_rb.linearVelocity, dir * _targetSpeed, _currentAccel * Time.deltaTime);
+                    Debug.DrawRay(hit.point, dir);
+                }
+                else
+                {
+                    _rb.linearVelocityX = Mathf.MoveTowards(_rb.linearVelocityX, _input.x * _targetSpeed, _currentAccel * Time.deltaTime);
+                }
             }
 
             var leftDirection = new Vector3(-directionDistance, 0, directionMinZ);
@@ -269,11 +279,11 @@ public class Player : MonoBehaviour
         }
         else if (_isCrouching)
         {
-            _currentSpeed = crouchSpeed;
+            _targetSpeed = crouchSpeed;
         }
         else
         {
-            _currentSpeed = walkSpeed;
+            _targetSpeed = walkSpeed;
         }
     }
 
