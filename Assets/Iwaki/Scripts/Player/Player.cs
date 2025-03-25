@@ -295,9 +295,14 @@ public class Player : MonoBehaviour
 
         if (_isHanging)
         {
-            _rb.bodyType = RigidbodyType2D.Dynamic;
-            _isHanging = false;
+            UnHanging();
         }
+    }
+
+    void UnHanging()
+    {
+        _rb.bodyType = RigidbodyType2D.Dynamic;
+        _isHanging = false;
     }
 
     void OnCrouch(InputValue value)
@@ -310,6 +315,10 @@ public class Player : MonoBehaviour
         {
             _rb.sharedMaterial.friction = walkingFriction;
             _isSliding = false;
+        }
+        else
+        {
+            UnHanging();
         }
     }
 
