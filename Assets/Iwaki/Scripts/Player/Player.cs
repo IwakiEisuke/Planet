@@ -10,10 +10,14 @@ public class Player : MonoBehaviour
     [SerializeField] float accel = 20;
     [SerializeField] float airAccel = 5;
 
-    [SerializeField] float directionTargetMaxDistance = 5;
-    [SerializeField] Transform playerDirectionTarget;
-
-    private float PlayerDirectionNormalized { get => (playerDirectionTarget.position - transform.position).x / directionTargetMaxDistance; }
+    [Header("MovementDirection")]
+    [SerializeField] float directionDistance = 5;
+    [SerializeField] float directionMinZ = -0.05f;
+    [SerializeField] Transform playerDirectionTransform;
+    [SerializeField] float playerDirection = 0;
+    [SerializeField] float turnSpeed = 6;
+    float playerDirectionRaw = 0;
+    private float PlayerDirectionNormalized { get => (playerDirectionTransform.position - transform.position).x / directionDistance; }
 
     [Header("Jump")]
     [SerializeField] float jumpHeight = 2;
@@ -22,6 +26,15 @@ public class Player : MonoBehaviour
     [SerializeField] LayerMask groundedLayer;
     [SerializeField] float rayDistance = 1;
     [SerializeField] float canGroundedAngle = 45;
+    [SerializeField] float minGroundedRateAngle = 30;
+    [SerializeField] float maxGroundedRateAngle = 60;
+    [SerializeField] float circleRadius = 0.5f;
+    [SerializeField] float groundedCooldown = 0.1f;
+
+    Vector2 _recentGroundNormal = Vector2.up;
+    float _groundedRate;
+    float _groundedTimer;
+    bool _canGrounded = true;
 
     [Header("Crouch")]
     [SerializeField] float crouchSpeed = 2.5f;
@@ -29,11 +42,19 @@ public class Player : MonoBehaviour
     [Header("Sliding")]
     [SerializeField] float slidingSpeed = 10;
     [SerializeField] float slidingAngle = 30;
+    [SerializeField] float cancelSlidingSpeed = 1f;
+
+    [Header("Physics")]
+    [SerializeField] float walkingFriction = 0.5f;
+    [SerializeField] float slidingFriction = 1f;
 
     [Header("Hanging")]
     [SerializeField] Vector2 _ledgeHangingOrigin = new(0, 0.5f);
     [SerializeField] float _ledgeHangingWidth = 0.5f;
     [SerializeField] float _ledgeHangingHeight = 0.2f;
+    [SerializeField] float _hangingCooldown = 0.3f;
+    bool _canHanging;
+    float _hangingRestoreTimer;
 
     [Header("Stats")]
     [SerializeField] PlayerStats _oxygen;
@@ -52,16 +73,19 @@ public class Player : MonoBehaviour
     [Header("Breath")]
     [SerializeField] float _consumeOxygenWhenStopBreath = 2;
     [SerializeField] float _toxicDamage = 5;
+    [SerializeField] float _breathValue = 1;
 
     Rigidbody2D _rb;
 
-    float _currentSpeed;
+    float _targetSpeed;
     float _currentAccel;
 
     Vector2 _input;
     bool _isGrounded;
+    bool _isHalfGrounded;
     bool _isCrouching;
     bool _isHanging;
+    bool _isSliding;
 
     public bool inToxicField;
     bool _isStopBreath;
@@ -76,20 +100,90 @@ public class Player : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody2D>();
 
-        _currentSpeed = walkSpeed;
+        _targetSpeed = walkSpeed;
         _currentAccel = accel;
+
+        _oxygen.ConditionsForReduction.Add((current, diff) => _isStopBreath);
     }
 
     private void Update()
     {
         if (_isDead) return;
 
+        if (Mathf.Abs(_input.x) > 0 && !_isCrouching)
+        {
+            playerDirectionRaw = _input.x > 0 ? 1 : -1;
+        }
+
+        if (_isSliding && Mathf.Abs(_rb.linearVelocityX) < cancelSlidingSpeed)
+        {
+            _isSliding = false;
+        }
+
+        if (!_canGrounded)
+        {
+            _groundedTimer -= Time.deltaTime;
+            if (_groundedTimer <= 0)
+            {
+                _canGrounded = true;
+            }
+        }
+
+        if (!_canHanging)
+        {
+            _hangingRestoreTimer -= Time.deltaTime;
+            if (_hangingRestoreTimer <= 0)
+            {
+                _canHanging = true;
+            }
+        }
+
+        if (!_isHanging)
+        {
+            IsHanging();
+        }
+
+        if (!_isHanging)
+        {
+            playerDirection = Mathf.MoveTowards(playerDirection, playerDirectionRaw, turnSpeed * Time.deltaTime);
+        }
+
         if (!_isHanging)
         {
             IsHanging();
             UpdateSpeed();
-            _rb.linearVelocityX = Mathf.MoveTowards(_rb.linearVelocityX, _input.x * _currentSpeed, _currentAccel * Time.deltaTime);
-            playerDirectionTarget.localPosition = new Vector2(_rb.linearVelocityX / walkSpeed * directionTargetMaxDistance, 0);
+
+            if (!_isSliding)
+            {
+                if (_isGrounded)
+                {
+                    var hit = Physics2D.CircleCast(transform.position, circleRadius, Vector2.down, 5, groundedLayer.value);
+                    var dir = Quaternion.FromToRotation(Vector2.up, hit.normal) * (Vector2.right * _input.x);
+                    _rb.linearVelocity = Vector2.MoveTowards(_rb.linearVelocity, dir * _targetSpeed, _currentAccel * Time.deltaTime);
+                    Debug.DrawRay(hit.point, dir);
+                }
+                else
+                {
+                    _rb.linearVelocityX = Mathf.MoveTowards(_rb.linearVelocityX, _input.x * _targetSpeed, _currentAccel * Time.deltaTime);
+                }
+            }
+            else if (_isGrounded)
+            {
+                var hit = Physics2D.CircleCast(transform.position, circleRadius, Vector2.down, 5, groundedLayer.value);
+                var dir = Quaternion.FromToRotation(Vector2.up, hit.normal) * (Vector2.right * playerDirectionRaw);
+
+                var targetVel = _rb.linearVelocity.magnitude * dir;
+
+                _rb.linearVelocityY = targetVel.y;
+                _rb.linearVelocity = targetVel;
+
+                Debug.DrawRay(hit.point, dir, Color.yellow);
+            }
+
+                var leftDirection = new Vector3(-directionDistance, 0, directionMinZ);
+            var rightDirection = new Vector3(directionDistance, 0, directionMinZ);
+
+            playerDirectionTransform.localPosition = Vector3.Slerp(leftDirection, rightDirection, (playerDirection + 1) / 2);
         }
         else
         {
@@ -118,6 +212,8 @@ public class Player : MonoBehaviour
 
     void IsHanging()
     {
+        if (!_canHanging) return;
+
         if (_rb.linearVelocityY > 0) return;
 
         var origin = _ledgeHangingOrigin + (Vector2)transform.position;
@@ -132,7 +228,22 @@ public class Player : MonoBehaviour
             _isHanging = true;
             _rb.linearVelocity = Vector2.zero;
             _rb.bodyType = RigidbodyType2D.Kinematic;
+
+            var leftDirection = new Vector3(-directionDistance, 0, directionMinZ);
+            var rightDirection = new Vector3(directionDistance, 0, directionMinZ);
+
+            playerDirectionRaw = (playerDirection > 0 ? 1 : -1);
+            playerDirectionTransform.localPosition = Vector3.Slerp(leftDirection, rightDirection, (playerDirectionRaw + 1) / 2);
+            playerDirection = playerDirectionRaw;
         }
+    }
+
+    void UnHanging()
+    {
+        _rb.bodyType = RigidbodyType2D.Dynamic;
+        _isHanging = false;
+        _canHanging = false;
+        _hangingRestoreTimer = _hangingCooldown;
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
@@ -152,30 +263,44 @@ public class Player : MonoBehaviour
         if (_inContacts.Count == 0)
         {
             _isGrounded = false;
+            _isHalfGrounded = false;
         }
     }
 
     void IsGrounded(Collision2D collision)
     {
-        // Ç±ÇÍÇ¢ÇÈÅH
-        //var hit = Physics2D.Raycast(transform.position, Vector2.down, rayDistance, groundedLayer.value);
-        //print("Hit: " + hit.collider.name);
+        if (!_canGrounded) return;
 
-        //if (hit.collider == null)
-        //{
-        //    _isGrounded = false;
-        //    return;
-        //}
-
-        _inContacts.Add(collision.collider);
-
+        var existFloor = false;
+        var isGrounded = false;
         foreach (var contact in collision.contacts)
         {
+            if (contact.normal.y < 0)
+            {
+                continue;
+            }
+            else
+            {
+                existFloor = true;
+                _recentGroundNormal = contact.normal;
+                Debug.DrawRay(contact.point, contact.normal, Color.blue);
+            }
+
             if (Vector2.Dot(Vector2.up, contact.normal) >= Mathf.Cos(canGroundedAngle * Mathf.Deg2Rad))
             {
-                _isGrounded = true;
+                isGrounded = true;
             }
+
+            _groundedRate = Mathf.Clamp01(1 - ((Mathf.Acos(Vector2.Dot(Vector2.up, contact.normal)) * Mathf.Rad2Deg - minGroundedRateAngle) / (maxGroundedRateAngle - minGroundedRateAngle)));
         }
+
+        if (existFloor)
+        {
+            _isGrounded = isGrounded;
+        }
+
+        _isHalfGrounded = existFloor;
+        _inContacts.Add(collision.collider);
     }
 
     void OnMove(InputValue value)
@@ -189,28 +314,47 @@ public class Player : MonoBehaviour
     {
         print("Jump");
 
-        if (_isHanging)
-        {
-            _isHanging = false;
-            _rb.bodyType = RigidbodyType2D.Dynamic;
-        }
-        else if (!_isGrounded) return;
+        if (!_isHanging && !_isHalfGrounded) return;
 
-        if (_isCrouching)
+        if (_isCrouching && !_isHanging)
         {
             // HeadSliding
             if (_oxygen.Reduce(2.5f))
             {
                 var angle = slidingAngle * Mathf.Deg2Rad;
-                _rb.linearVelocity = new Vector2(PlayerDirectionNormalized * slidingSpeed * Mathf.Cos(angle), slidingSpeed * Mathf.Sin(angle));
+                _rb.linearVelocity = new Vector2(playerDirectionRaw * slidingSpeed * Mathf.Cos(angle), slidingSpeed * Mathf.Sin(angle));
+                _rb.sharedMaterial.friction = slidingFriction;
+                _isSliding = true;
+
+                _groundedTimer = groundedCooldown;
+                _canGrounded = false;
+
+                _isGrounded = false;
             }
         }
         else
         {
             if (_oxygen.Reduce(1.6f))
             {
-                _rb.linearVelocityY = Mathf.Sqrt(2 * Mathf.Abs(Physics.gravity.y) * jumpHeight);
+                Vector2 jumpVel;
+
+                if (_isHanging)
+                {
+                    jumpVel = Vector2.up * Mathf.Sqrt(2 * Mathf.Abs(Physics.gravity.y) * jumpHeight);
+                }
+                else
+                {
+                    jumpVel = Vector3.Slerp(_recentGroundNormal, Vector2.up, _groundedRate) * Mathf.Sqrt(2 * Mathf.Abs(Physics.gravity.y) * (jumpHeight * Mathf.Clamp01(0.7f + _groundedRate)));
+                }
+
+                _rb.linearVelocityX += jumpVel.x;
+                _rb.linearVelocityY = jumpVel.y;
             }
+        }
+
+        if (_isHanging)
+        {
+            UnHanging();
         }
     }
 
@@ -219,6 +363,16 @@ public class Player : MonoBehaviour
         print("Crouch");
 
         _isCrouching = value.isPressed;
+
+        if (!_isCrouching)
+        {
+            _rb.sharedMaterial.friction = walkingFriction;
+            _isSliding = false;
+        }
+        else
+        {
+            UnHanging();
+        }
     }
 
     void UpdateSpeed()
@@ -234,11 +388,11 @@ public class Player : MonoBehaviour
         }
         else if (_isCrouching)
         {
-            _currentSpeed = crouchSpeed;
+            _targetSpeed = crouchSpeed;
         }
         else
         {
-            _currentSpeed = walkSpeed;
+            _targetSpeed = walkSpeed;
         }
     }
 
@@ -293,6 +447,8 @@ public class Player : MonoBehaviour
     void OnBreathe()
     {
         print("Breathe");
+
+        _oxygen.Add(_breathValue);
 
         _isStopBreath = false;
     }
@@ -350,7 +506,11 @@ public class Player : MonoBehaviour
 
         GUILayout.BeginVertical();
         GUILayout.Label($"_isGrounded {_isGrounded}", style);
+        GUILayout.Label($"_isHalfGrounded {_isHalfGrounded}", style);
         GUILayout.Label($"_isCrouching {_isCrouching}", style);
+        GUILayout.Label($"_isSliding {_isSliding}", style);
+        GUILayout.Label($"friction {_rb.sharedMaterial.friction}", style);
+        GUILayout.Label($"_groundedRate {_groundedRate}", style);
 
         foreach (var c in _inContacts)
         {
