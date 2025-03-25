@@ -79,6 +79,7 @@ Transform:
   m_Children:
   - {fileID: 1871546835629647734}
   - {fileID: 8959307431057796230}
+  - {fileID: 7920471181925036465}
   m_Father: {fileID: 3386400492721649583}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &670915732364443501
@@ -172,6 +173,37 @@ MonoBehaviour:
   bar: {fileID: 3655563273469488497}
   stats: {fileID: 826364453593877429}
   barSpeed: 0.5
+--- !u!1 &880143841911940255
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7920471181925036465}
+  m_Layer: 6
+  m_Name: PlayerDirection
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7920471181925036465
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 880143841911940255}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8212281163950091546}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1884851604246122880
 GameObject:
   m_ObjectHideFlags: 0
@@ -419,6 +451,8 @@ MonoBehaviour:
   walkSpeed: 5
   accel: 20
   airAccel: 10
+  directionTargetMaxDistance: 5
+  playerDirectionTarget: {fileID: 7920471181925036465}
   jumpHeight: 4
   groundedLayer:
     serializedVersion: 2
