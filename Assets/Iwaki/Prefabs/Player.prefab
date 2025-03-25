@@ -451,8 +451,10 @@ MonoBehaviour:
   walkSpeed: 5
   accel: 20
   airAccel: 10
-  directionTargetMaxDistance: 5
-  playerDirectionTarget: {fileID: 7920471181925036465}
+  directionDistance: 5
+  directionMinZ: -0.05
+  playerDirectionTransform: {fileID: 7920471181925036465}
+  playerDirection: 0
   jumpHeight: 4
   groundedLayer:
     serializedVersion: 2

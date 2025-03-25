@@ -10,10 +10,13 @@ public class Player : MonoBehaviour
     [SerializeField] float accel = 20;
     [SerializeField] float airAccel = 5;
 
-    [SerializeField] float directionTargetMaxDistance = 5;
-    [SerializeField] Transform playerDirectionTarget;
-
-    private float PlayerDirectionNormalized { get => (playerDirectionTarget.position - transform.position).x / directionTargetMaxDistance; }
+    [Header("MovementDirection")]
+    [SerializeField] float directionDistance = 5;
+    [SerializeField] float directionMinZ = -0.05f;
+    [SerializeField] Transform playerDirectionTransform;
+    [SerializeField] float playerDirection = 0;
+    float playerDirectionRaw = 0;
+    private float PlayerDirectionNormalized { get => (playerDirectionTransform.position - transform.position).x / directionDistance; }
 
     [Header("Jump")]
     [SerializeField] float jumpHeight = 2;
@@ -84,12 +87,18 @@ public class Player : MonoBehaviour
     {
         if (_isDead) return;
 
+        playerDirection = Mathf.MoveTowards(playerDirection, playerDirectionRaw, walkSpeed * Time.deltaTime);
+
         if (!_isHanging)
         {
             IsHanging();
             UpdateSpeed();
             _rb.linearVelocityX = Mathf.MoveTowards(_rb.linearVelocityX, _input.x * _currentSpeed, _currentAccel * Time.deltaTime);
-            playerDirectionTarget.localPosition = new Vector2(_rb.linearVelocityX / walkSpeed * directionTargetMaxDistance, 0);
+
+            var leftDirection = new Vector3(-directionDistance, 0, directionMinZ);
+            var rightDirection = new Vector3(directionDistance, 0, directionMinZ);
+
+            playerDirectionTransform.localPosition = Vector3.Slerp(leftDirection, rightDirection, (playerDirection + 1) / 2);
         }
         else
         {
@@ -183,6 +192,11 @@ public class Player : MonoBehaviour
         print("Move");
 
         _input = value.Get<Vector2>();
+
+        if (!_isCrouching && Mathf.Abs(_input.x) > 0)
+        {
+            playerDirectionRaw = _input.x > 0 ? 1 : -1;
+        }
     }
 
     void OnJump(InputValue value)
@@ -202,7 +216,7 @@ public class Player : MonoBehaviour
             if (_oxygen.Reduce(2.5f))
             {
                 var angle = slidingAngle * Mathf.Deg2Rad;
-                _rb.linearVelocity = new Vector2(PlayerDirectionNormalized * slidingSpeed * Mathf.Cos(angle), slidingSpeed * Mathf.Sin(angle));
+                _rb.linearVelocity = new Vector2(playerDirectionRaw * slidingSpeed * Mathf.Cos(angle), slidingSpeed * Mathf.Sin(angle));
             }
         }
         else
