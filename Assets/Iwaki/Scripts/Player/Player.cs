@@ -90,6 +90,8 @@ public class Player : MonoBehaviour
 
         _targetSpeed = walkSpeed;
         _currentAccel = accel;
+
+        _oxygen.ConditionsForReduction.Add((current, diff) => _isStopBreath);
     }
 
     private void Update()

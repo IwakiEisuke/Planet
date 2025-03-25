@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PlayerStats : MonoBehaviour
@@ -7,11 +9,13 @@ public class PlayerStats : MonoBehaviour
     [SerializeField] float regeneration = 2;
     [SerializeField] float restartRegen = 1.2f;
     [SerializeField] bool canRegenerate;
+    [SerializeField] bool successWhenExhausted;
 
     float _current;
     float _timeBeforeValueDecreased;
 
     public event Action OnExhaustion;
+    readonly public List<Func<float, float, bool>> ConditionsForReduction = new();
 
     public bool IsRegenerate { get; set; }
 
@@ -37,16 +41,26 @@ public class PlayerStats : MonoBehaviour
 
     public bool Reduce(float value)
     {
-        _current -= value;
-
-        IsRegenerate = false;
-        _timeBeforeValueDecreased = 0;
-
-        if (_current <= 0)
+        if (_current == 0)
         {
-            _current = 0;
-            OnExhaustion?.Invoke();
             return false;
+        }
+
+        var conditions = ConditionsForReduction.Select(f => f.Invoke(_current, value));
+
+        if (conditions.All(b => b == true))
+        {
+            _current -= value;
+
+            IsRegenerate = false;
+            _timeBeforeValueDecreased = 0;
+
+            if (_current <= 0)
+            {
+                _current = 0;
+                OnExhaustion?.Invoke();
+                return successWhenExhausted;
+            }
         }
 
         return true;
