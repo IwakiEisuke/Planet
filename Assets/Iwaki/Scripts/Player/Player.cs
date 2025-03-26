@@ -21,6 +21,8 @@ public class Player : MonoBehaviour
     [Header("Jump")]
     [SerializeField] float jumpHeight = 2;
 
+    bool _canJump;
+
     [Header("Check Grounded")]
     [SerializeField] LayerMask groundedLayer;
     [SerializeField] float rayDistance = 1;
@@ -113,6 +115,11 @@ public class Player : MonoBehaviour
         if (_isDead) return;
 
         _coyoteTimer -= Time.deltaTime;
+
+        if (!_isHalfGrounded && _coyoteTimer <= 0)
+        {
+            _canJump = false;
+        }
 
         if (Mathf.Abs(_input.x) > 0 && !_isCrouching)
         {
@@ -311,6 +318,7 @@ public class Player : MonoBehaviour
         }
 
         _isHalfGrounded = existFloor;
+        _canJump = _isHalfGrounded;
         _inContacts.Add(collision.collider);
     }
 
@@ -325,7 +333,7 @@ public class Player : MonoBehaviour
     {
         print("Jump");
 
-        if (!_isHanging && !_isHalfGrounded) return;
+        if (!_isHanging && !_canJump) return;
 
         if (_isCrouching && !_isHanging && _isGrounded)
         {
@@ -358,10 +366,15 @@ public class Player : MonoBehaviour
                     jumpVel = Vector3.Slerp(_recentGroundNormal, Vector2.up, _groundedRate) * Mathf.Sqrt(2 * Mathf.Abs(Physics.gravity.y) * (jumpHeight * Mathf.Clamp01(0.7f + _groundedRate)));
                 }
 
+                _canGroundedTimer = groundedCooldown;
+                _canGrounded = false;
+
                 _rb.linearVelocityX += jumpVel.x;
                 _rb.linearVelocityY = jumpVel.y;
             }
         }
+
+        _canJump = false;
 
         if (_isHanging)
         {
@@ -519,6 +532,7 @@ public class Player : MonoBehaviour
         GUILayout.Label($"_isSliding {_isSliding}", style);
         GUILayout.Label($"friction {_rb.sharedMaterial.friction}", style);
         GUILayout.Label($"_groundedRate {_groundedRate}", style);
+        GUILayout.Label($"_canJump {_canJump}", style);
 
         foreach (var c in _inContacts)
         {
