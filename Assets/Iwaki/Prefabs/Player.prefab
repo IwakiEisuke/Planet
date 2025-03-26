@@ -470,7 +470,7 @@ MonoBehaviour:
   crouchSpeed: 2.5
   slidingSpeed: 10
   slidingAngle: 20
-  cancelSlidingSpeed: 1
+  cancelSlidingSpeed: 0.2
   walkingFriction: 0
   slidingFriction: 0
   _ledgeHangingOrigin: {x: 0, y: 0.3}
