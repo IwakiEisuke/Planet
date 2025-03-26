@@ -29,11 +29,13 @@ public class Player : MonoBehaviour
     [SerializeField] float maxGroundedRateAngle = 60;
     [SerializeField] float circleRadius = 0.5f;
     [SerializeField] float groundedCooldown = 0.1f;
+    [SerializeField] float coyoteTime = 0.2f;
 
     Vector2 _recentGroundNormal = Vector2.up;
     float _groundedRate;
-    float _groundedTimer;
+    float _canGroundedTimer;
     bool _canGrounded = true;
+    float _coyoteTimer;
 
     [Header("Crouch")]
     [SerializeField] float crouchSpeed = 2.5f;
@@ -110,6 +112,8 @@ public class Player : MonoBehaviour
     {
         if (_isDead) return;
 
+        _coyoteTimer -= Time.deltaTime;
+
         if (Mathf.Abs(_input.x) > 0 && !_isCrouching)
         {
             playerDirectionRaw = _input.x > 0 ? 1 : -1;
@@ -122,8 +126,8 @@ public class Player : MonoBehaviour
 
         if (!_canGrounded)
         {
-            _groundedTimer -= Time.deltaTime;
-            if (_groundedTimer <= 0)
+            _canGroundedTimer -= Time.deltaTime;
+            if (_canGroundedTimer <= 0)
             {
                 _canGrounded = true;
             }
@@ -299,6 +303,11 @@ public class Player : MonoBehaviour
         if (existFloor)
         {
             _isGrounded = isGrounded;
+
+            if (_isGrounded)
+            {
+                _coyoteTimer = coyoteTime;
+            }
         }
 
         _isHalfGrounded = existFloor;
@@ -328,7 +337,7 @@ public class Player : MonoBehaviour
                 _rb.sharedMaterial.friction = slidingFriction;
                 _isSliding = true;
 
-                _groundedTimer = groundedCooldown;
+                _canGroundedTimer = groundedCooldown;
                 _canGrounded = false;
 
                 _isGrounded = false;
