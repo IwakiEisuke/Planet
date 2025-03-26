@@ -316,7 +316,7 @@ public class Player : MonoBehaviour
 
         if (!_isHanging && !_isHalfGrounded) return;
 
-        if (_isCrouching && !_isHanging)
+        if (_isCrouching && !_isHanging && _isGrounded)
         {
             // HeadSliding
             if (_oxygen.Reduce(2.5f))
