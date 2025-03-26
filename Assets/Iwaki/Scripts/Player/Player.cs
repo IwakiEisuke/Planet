@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -22,6 +21,8 @@ public class Player : MonoBehaviour
     [Header("Jump")]
     [SerializeField] float jumpHeight = 2;
 
+    bool _canJump;
+
     [Header("Check Grounded")]
     [SerializeField] LayerMask groundedLayer;
     [SerializeField] float rayDistance = 1;
@@ -30,11 +31,13 @@ public class Player : MonoBehaviour
     [SerializeField] float maxGroundedRateAngle = 60;
     [SerializeField] float circleRadius = 0.5f;
     [SerializeField] float groundedCooldown = 0.1f;
+    [SerializeField] float coyoteTime = 0.2f;
 
     Vector2 _recentGroundNormal = Vector2.up;
     float _groundedRate;
-    float _groundedTimer;
+    float _canGroundedTimer;
     bool _canGrounded = true;
+    float _coyoteTimer;
 
     [Header("Crouch")]
     [SerializeField] float crouchSpeed = 2.5f;
@@ -67,6 +70,7 @@ public class Player : MonoBehaviour
     [SerializeField] Joint2D _handJoint;
     [SerializeField] float _throwForce;
     [SerializeField] float _throwAngle;
+    [SerializeField] float _timeFromThrowingToReleasingExcludeLayer = 0.1f;
 
     public ItemBase HandItem => _item;
 
@@ -94,7 +98,7 @@ public class Player : MonoBehaviour
 
     readonly HashSet<Collider2D> _inContacts = new();
 
-    public event Action OnDead;
+    public event System.Action OnDead;
 
     private void Start()
     {
@@ -110,6 +114,13 @@ public class Player : MonoBehaviour
     {
         if (_isDead) return;
 
+        _coyoteTimer -= Time.deltaTime;
+
+        if (!_isHalfGrounded && _coyoteTimer <= 0)
+        {
+            _canJump = false;
+        }
+
         if (Mathf.Abs(_input.x) > 0 && !_isCrouching)
         {
             playerDirectionRaw = _input.x > 0 ? 1 : -1;
@@ -122,8 +133,8 @@ public class Player : MonoBehaviour
 
         if (!_canGrounded)
         {
-            _groundedTimer -= Time.deltaTime;
-            if (_groundedTimer <= 0)
+            _canGroundedTimer -= Time.deltaTime;
+            if (_canGroundedTimer <= 0)
             {
                 _canGrounded = true;
             }
@@ -169,12 +180,10 @@ public class Player : MonoBehaviour
             }
             else if (_isGrounded)
             {
-                var hit = Physics2D.CircleCast(transform.position, circleRadius, Vector2.down, 5, groundedLayer.value);
+                var hit = Physics2D.Raycast(transform.position, Vector2.down, 5, groundedLayer.value);
                 var dir = Quaternion.FromToRotation(Vector2.up, hit.normal) * (Vector2.right * playerDirectionRaw);
 
                 var targetVel = _rb.linearVelocity.magnitude * dir;
-
-                _rb.linearVelocityY = targetVel.y;
                 _rb.linearVelocity = targetVel;
 
                 Debug.DrawRay(hit.point, dir, Color.yellow);
@@ -221,6 +230,8 @@ public class Player : MonoBehaviour
 
         var wallHit = Physics2D.Raycast(origin, Vector2.right * PlayerDirectionNormalized, _ledgeHangingWidth, groundedLayer.value);
         var floorHit = Physics2D.Raycast(crossPoint + Vector2.up * _ledgeHangingHeight, Vector2.down, _ledgeHangingHeight, groundedLayer.value);
+
+        if (Vector2.Dot(Vector2.up, floorHit.normal) < Mathf.Cos(canGroundedAngle * Mathf.Deg2Rad)) return;
 
         if (floorHit.distance > 0.01f && wallHit.collider && floorHit.collider)
         {
@@ -297,9 +308,15 @@ public class Player : MonoBehaviour
         if (existFloor)
         {
             _isGrounded = isGrounded;
+
+            if (_isGrounded)
+            {
+                _coyoteTimer = coyoteTime;
+            }
         }
 
         _isHalfGrounded = existFloor;
+        _canJump = _isHalfGrounded;
         _inContacts.Add(collision.collider);
     }
 
@@ -314,9 +331,9 @@ public class Player : MonoBehaviour
     {
         print("Jump");
 
-        if (!_isHanging && !_isHalfGrounded) return;
+        if (!_isHanging && !_canJump) return;
 
-        if (_isCrouching && !_isHanging)
+        if (_isCrouching && !_isHanging && _isGrounded)
         {
             // HeadSliding
             if (_oxygen.Reduce(2.5f))
@@ -326,7 +343,7 @@ public class Player : MonoBehaviour
                 _rb.sharedMaterial.friction = slidingFriction;
                 _isSliding = true;
 
-                _groundedTimer = groundedCooldown;
+                _canGroundedTimer = groundedCooldown;
                 _canGrounded = false;
 
                 _isGrounded = false;
@@ -347,10 +364,15 @@ public class Player : MonoBehaviour
                     jumpVel = Vector3.Slerp(_recentGroundNormal, Vector2.up, _groundedRate) * Mathf.Sqrt(2 * Mathf.Abs(Physics.gravity.y) * (jumpHeight * Mathf.Clamp01(0.7f + _groundedRate)));
                 }
 
+                _canGroundedTimer = groundedCooldown;
+                _canGrounded = false;
+
                 _rb.linearVelocityX += jumpVel.x;
                 _rb.linearVelocityY = jumpVel.y;
             }
         }
+
+        _canJump = false;
 
         if (_isHanging)
         {
@@ -459,11 +481,13 @@ public class Player : MonoBehaviour
 
         if (_item)
         {
+            _item.Release(_timeFromThrowingToReleasingExcludeLayer);
+
             var itemRb = _item.GetComponent<Rigidbody2D>();
 
             DropItem();
 
-            var throwForce = _throwForce * new Vector2(Mathf.Cos(_throwAngle * Mathf.Deg2Rad), Mathf.Sin(_throwAngle * Mathf.Deg2Rad));
+            var throwForce = _throwForce * new Vector2(Mathf.Cos(_throwAngle * Mathf.Deg2Rad) * playerDirectionRaw, Mathf.Sin(_throwAngle * Mathf.Deg2Rad));
             Debug.DrawRay(transform.position, throwForce, Color.white, 10);
             itemRb.AddForce(throwForce);
         }
@@ -486,11 +510,6 @@ public class Player : MonoBehaviour
 
     void DropItem()
     {
-        var itemRb = _item.GetComponent<Rigidbody2D>();
-        var layers = itemRb.excludeLayers.value;
-        layers &= ~LayerMask.GetMask("Player");
-        itemRb.excludeLayers = layers;
-
         print("Drop " + _item.name);
 
         _handJoint.connectedBody = null;
@@ -511,6 +530,7 @@ public class Player : MonoBehaviour
         GUILayout.Label($"_isSliding {_isSliding}", style);
         GUILayout.Label($"friction {_rb.sharedMaterial.friction}", style);
         GUILayout.Label($"_groundedRate {_groundedRate}", style);
+        GUILayout.Label($"_canJump {_canJump}", style);
 
         foreach (var c in _inContacts)
         {
