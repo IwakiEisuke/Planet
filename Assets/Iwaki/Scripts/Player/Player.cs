@@ -180,12 +180,10 @@ public class Player : MonoBehaviour
             }
             else if (_isGrounded)
             {
-                var hit = Physics2D.CircleCast(transform.position, circleRadius, Vector2.down, 5, groundedLayer.value);
+                var hit = Physics2D.Raycast(transform.position, Vector2.down, 5, groundedLayer.value);
                 var dir = Quaternion.FromToRotation(Vector2.up, hit.normal) * (Vector2.right * playerDirectionRaw);
 
                 var targetVel = _rb.linearVelocity.magnitude * dir;
-
-                _rb.linearVelocityY = targetVel.y;
                 _rb.linearVelocity = targetVel;
 
                 Debug.DrawRay(hit.point, dir, Color.yellow);
