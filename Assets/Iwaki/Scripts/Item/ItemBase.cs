@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class ItemBase : MonoBehaviour, IHoldable
@@ -6,11 +7,15 @@ public class ItemBase : MonoBehaviour, IHoldable
 
     public bool isBuried;
 
+    Rigidbody2D _rb;
+
     private void Start()
     {
+        _rb = GetComponent<Rigidbody2D>();
+
         if (isBuried)
         {
-            GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Kinematic;
+            _rb.bodyType = RigidbodyType2D.Kinematic;
         }
     }
 
@@ -28,6 +33,12 @@ public class ItemBase : MonoBehaviour, IHoldable
     public void Dig()
     {
         isBuried = false;
-        GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
+        _rb.bodyType = RigidbodyType2D.Dynamic;
+    }
+
+    public async void Release(float t)
+    {
+        await Task.Delay((int)(t * 1000));
+        _rb.excludeLayers &= ~LayerMask.GetMask("Player");
     }
 }

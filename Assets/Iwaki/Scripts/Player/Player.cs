@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -67,6 +66,7 @@ public class Player : MonoBehaviour
     [SerializeField] Joint2D _handJoint;
     [SerializeField] float _throwForce;
     [SerializeField] float _throwAngle;
+    [SerializeField] float _timeFromThrowingToReleasingExcludeLayer = 0.1f;
 
     public ItemBase HandItem => _item;
 
@@ -94,7 +94,7 @@ public class Player : MonoBehaviour
 
     readonly HashSet<Collider2D> _inContacts = new();
 
-    public event Action OnDead;
+    public event System.Action OnDead;
 
     private void Start()
     {
@@ -459,6 +459,8 @@ public class Player : MonoBehaviour
 
         if (_item)
         {
+            _item.Release(_timeFromThrowingToReleasingExcludeLayer);
+
             var itemRb = _item.GetComponent<Rigidbody2D>();
 
             DropItem();
@@ -486,9 +488,6 @@ public class Player : MonoBehaviour
 
     void DropItem()
     {
-        var itemRb = _item.GetComponent<Rigidbody2D>();
-        itemRb.excludeLayers &= ~LayerMask.GetMask("Player");
-
         print("Drop " + _item.name);
 
         _handJoint.connectedBody = null;
