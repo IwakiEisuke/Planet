@@ -487,9 +487,7 @@ public class Player : MonoBehaviour
     void DropItem()
     {
         var itemRb = _item.GetComponent<Rigidbody2D>();
-        var layers = itemRb.excludeLayers.value;
-        layers &= ~LayerMask.GetMask("Player");
-        itemRb.excludeLayers = layers;
+        itemRb.excludeLayers &= ~LayerMask.GetMask("Player");
 
         print("Drop " + _item.name);
 
