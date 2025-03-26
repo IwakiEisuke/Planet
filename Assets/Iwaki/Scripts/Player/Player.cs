@@ -463,7 +463,7 @@ public class Player : MonoBehaviour
 
             DropItem();
 
-            var throwForce = _throwForce * new Vector2(Mathf.Cos(_throwAngle * Mathf.Deg2Rad), Mathf.Sin(_throwAngle * Mathf.Deg2Rad));
+            var throwForce = _throwForce * new Vector2(Mathf.Cos(_throwAngle * Mathf.Deg2Rad) * playerDirectionRaw, Mathf.Sin(_throwAngle * Mathf.Deg2Rad));
             Debug.DrawRay(transform.position, throwForce, Color.white, 10);
             itemRb.AddForce(throwForce);
         }
