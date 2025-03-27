@@ -501,7 +501,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 34.844444, y: 19.6}
+  m_Size: {x: 41.165314, y: 19.6}
   m_EdgeRadius: 0
 --- !u!114 &34099482
 MonoBehaviour:
@@ -2062,7 +2062,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 34.844444, y: 19.6}
+  m_Size: {x: 41.165314, y: 19.6}
   m_EdgeRadius: 0
 --- !u!4 &284108111
 Transform:
@@ -2462,7 +2462,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 34.844444, y: 19.6}
+  m_Size: {x: 41.165314, y: 19.6}
   m_EdgeRadius: 0
 --- !u!114 &317902414
 MonoBehaviour:
@@ -3634,7 +3634,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 34.844444, y: 19.6}
+  m_Size: {x: 41.165314, y: 19.6}
   m_EdgeRadius: 0
 --- !u!114 &487781693
 MonoBehaviour:
@@ -3918,7 +3918,7 @@ MonoBehaviour:
       spriteIndex: 0
       corner: 1
       m_CornerMode: 1
-    - position: {x: 26.7, y: -4.5, z: 0}
+    - position: {x: 26.7, y: -3.5, z: 0}
       leftTangent: {x: 0, y: 0, z: 0}
       rightTangent: {x: 0, y: 0, z: 0}
       mode: 0
@@ -3926,7 +3926,7 @@ MonoBehaviour:
       spriteIndex: 0
       corner: 1
       m_CornerMode: 1
-    - position: {x: 19.2, y: -4.5, z: 0}
+    - position: {x: 19.2, y: -3.5, z: 0}
       leftTangent: {x: 0, y: 0, z: 0}
       rightTangent: {x: 0, y: 0, z: 0}
       mode: 0
@@ -4008,9 +4008,9 @@ MonoBehaviour:
   - {x: 44.19904, y: 4.0002747}
   - {x: 43.20029, y: 0.50095665}
   - {x: 33.781025, y: 3.367422}
-  - {x: 29.199078, y: 1.5003846}
-  - {x: 26.699078, y: -4.499615}
-  - {x: 19.200602, y: -4.4992}
+  - {x: 29.199108, y: 1.5004473}
+  - {x: 26.7, y: -3.499}
+  - {x: 19.200245, y: -3.4990299}
   - {x: 17.200832, y: -2.9994452}
   - {x: 14.2, y: 1.5009999}
   - {x: 9.699095, y: 1.5004258}
@@ -4139,9 +4139,9 @@ PolygonCollider2D:
       - {x: 44.19904, y: 4.0002747}
       - {x: 43.20029, y: 0.50095665}
       - {x: 33.781025, y: 3.367422}
-      - {x: 29.199078, y: 1.5003846}
-      - {x: 26.699078, y: -4.499615}
-      - {x: 19.200602, y: -4.4992}
+      - {x: 29.199108, y: 1.5004473}
+      - {x: 26.7, y: -3.499}
+      - {x: 19.200245, y: -3.4990299}
       - {x: 17.200832, y: -2.9994452}
       - {x: 14.2, y: 1.5009999}
       - {x: 9.699095, y: 1.5004258}
@@ -8748,7 +8748,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 34.844444, y: 19.6}
+  m_Size: {x: 41.165314, y: 19.6}
   m_EdgeRadius: 0
 --- !u!114 &1400336209
 MonoBehaviour:
@@ -10231,7 +10231,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 34.844444, y: 19.6}
+  m_Size: {x: 41.165314, y: 19.6}
   m_EdgeRadius: 0
 --- !u!114 &1651543999
 MonoBehaviour:
@@ -10872,7 +10872,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 19.6, y: 19.6}
+  m_Size: {x: 41.165314, y: 19.6}
   m_EdgeRadius: 0
 --- !u!114 &1710044277
 MonoBehaviour:
@@ -11814,7 +11814,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 34.844444, y: 19.6}
+  m_Size: {x: 41.165314, y: 19.6}
   m_EdgeRadius: 0
 --- !u!114 &1853488528
 MonoBehaviour:
@@ -12269,7 +12269,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 19.6, y: 19.6}
+  m_Size: {x: 41.165314, y: 19.6}
   m_EdgeRadius: 0
 --- !u!114 &1876969198
 MonoBehaviour:
@@ -12668,7 +12668,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 19.6, y: 19.6}
+  m_Size: {x: 41.165314, y: 19.6}
   m_EdgeRadius: 0
 --- !u!114 &1893597215
 MonoBehaviour:
@@ -14226,7 +14226,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 34.844444, y: 19.6}
+  m_Size: {x: 41.165314, y: 19.6}
   m_EdgeRadius: 0
 --- !u!114 &1926570383
 MonoBehaviour:
@@ -16854,7 +16854,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 34.844444, y: 19.6}
+  m_Size: {x: 41.165314, y: 19.6}
   m_EdgeRadius: 0
 --- !u!114 &2070185240
 MonoBehaviour:
@@ -18002,11 +18002,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3386400492721649583, guid: b84b2c616a33f6f4c93405cc2b24cdca, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -50.93
+      value: 80.12
       objectReference: {fileID: 0}
     - target: {fileID: 3386400492721649583, guid: b84b2c616a33f6f4c93405cc2b24cdca, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 5.67
+      value: 1.04
       objectReference: {fileID: 0}
     - target: {fileID: 3386400492721649583, guid: b84b2c616a33f6f4c93405cc2b24cdca, type: 3}
       propertyPath: m_LocalPosition.z
