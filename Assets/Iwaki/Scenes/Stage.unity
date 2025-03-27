@@ -1046,7 +1046,7 @@ MonoBehaviour:
   m_Intensity: 0.5
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
-  m_ApplyToSortingLayers: 00000000bbc850152fb5826a75b94370
+  m_ApplyToSortingLayers: 00000000bbc850152fb5826a75b94370352f6cd6
   m_LightCookieSprite: {fileID: 0}
   m_DeprecatedPointLightCookieSprite: {fileID: 0}
   m_LightOrder: 0
@@ -1093,47 +1093,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &687902458 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4192987138722215803, guid: b84b2c616a33f6f4c93405cc2b24cdca, type: 3}
-  m_PrefabInstance: {fileID: 3523284226325586343}
-  m_PrefabAsset: {fileID: 0}
---- !u!58 &687902461
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 687902458}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0.0000019073486}
-  m_Radius: 0.5
 --- !u!1 &1006737537
 GameObject:
   m_ObjectHideFlags: 0
@@ -3824,29 +3783,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6549513307453776194, guid: b84b2c616a33f6f4c93405cc2b24cdca, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7172963333480227756, guid: b84b2c616a33f6f4c93405cc2b24cdca, type: 3}
-      propertyPath: walkingFriction
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7172963333480227756, guid: b84b2c616a33f6f4c93405cc2b24cdca, type: 3}
-      propertyPath: hangingLayer.m_Bits
-      value: 2049
-      objectReference: {fileID: 0}
-    - target: {fileID: 7172963333480227756, guid: b84b2c616a33f6f4c93405cc2b24cdca, type: 3}
-      propertyPath: groundedLayer.m_Bits
-      value: 2103
+    - target: {fileID: 8299163938174364900, guid: b84b2c616a33f6f4c93405cc2b24cdca, type: 3}
+      propertyPath: m_SortingLayerID
+      value: -697553099
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 4192987138722215803, guid: b84b2c616a33f6f4c93405cc2b24cdca, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 687902461}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b84b2c616a33f6f4c93405cc2b24cdca, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

@@ -519,23 +519,26 @@ MonoBehaviour:
   jumpHeight: 4
   groundedLayer:
     serializedVersion: 2
-    m_Bits: 55
-  rayDistance: 1
+    m_Bits: 2103
   canGroundedAngle: 45
   minGroundedRateAngle: 20
   maxGroundedRateAngle: 60
   circleRadius: 0.25
   groundedCooldown: 0.1
+  coyoteTime: 0.2
   crouchSpeed: 2.5
   slidingSpeed: 10
   slidingAngle: 20
   cancelSlidingSpeed: 0.2
-  walkingFriction: 0
+  walkingFriction: 0.5
   slidingFriction: 0
   _ledgeHangingOrigin: {x: 0, y: 0.3}
   _ledgeHangingWidth: 0.5
   _ledgeHangingHeight: 0.4
   _hangingCooldown: 0.3
+  hangingLayer:
+    serializedVersion: 2
+    m_Bits: 2049
   _oxygen: {fileID: 6055472501585769541}
   _health: {fileID: 826364453593877429}
   _item: {fileID: 0}
@@ -550,6 +553,9 @@ MonoBehaviour:
   _consumeOxygenWhenStopBreath: 2
   _toxicDamage: 5
   _breathValue: 1
+  jumpCost: 1.4
+  slidingCost: 2.5
+  _debug: 0
   inToxicField: 0
 --- !u!50 &6480737533959019554
 Rigidbody2D:
@@ -944,7 +950,10 @@ GameObject:
   m_Component:
   - component: {fileID: 1871546835629647734}
   - component: {fileID: 7485840121339806213}
-  m_Layer: 6
+  - component: {fileID: 5422103989204560194}
+  - component: {fileID: 4543516882960053450}
+  - component: {fileID: 9018829953688795857}
+  m_Layer: 12
   m_Name: Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1021,6 +1030,82 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!58 &5422103989204560194
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4192987138722215803}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0.0000019073486}
+  m_Radius: 0.5
+--- !u!114 &4543516882960053450
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4192987138722215803}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab951df3532fb574686ff9a3a21b9aa9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 7172963333480227756}
+--- !u!50 &9018829953688795857
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4192987138722215803}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &4274816729450485892
 GameObject:
   m_ObjectHideFlags: 0
