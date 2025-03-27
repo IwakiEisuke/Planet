@@ -248,9 +248,11 @@ public class Player : MonoBehaviour
 
         if (Vector2.Dot(Vector2.up, floorHit.normal) < Mathf.Cos(canGroundedAngle * Mathf.Deg2Rad)) return;
 
-        if (floorHit.distance > 0.01f && wallHit.collider && floorHit.collider)
+        var isGrabPoint = floorHit.collider.gameObject.layer == 11;
+
+        if (floorHit.distance > 0.01f && (isGrabPoint || wallHit.collider) && floorHit.collider)
         {
-            print($"Hanging <wall:{wallHit.collider.name}> <floor:{floorHit.collider.name}>");
+            print($"Hanging {(isGrabPoint ? "GrabPoint" : $"<wall:{wallHit.collider.name}>")} <floor:{floorHit.collider.name}>");
             _isHanging = true;
             _rb.linearVelocity = Vector2.zero;
             _rb.bodyType = RigidbodyType2D.Kinematic;
