@@ -467,6 +467,10 @@ public class Player : MonoBehaviour
             {
                 StartCoroutine(pit.Dig(1));
             }
+            else if (hit.TryGetComponent<Last>(out var last))
+            {
+                last.Ending();
+            }
         }
         else if (_isCrouching)
         {
