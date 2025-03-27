@@ -44,6 +44,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Gas
+    uniqueID: 1883486581
+    locked: 0
   - name: Ground
     uniqueID: 357615803
     locked: 0
