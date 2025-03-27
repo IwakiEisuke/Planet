@@ -25,7 +25,6 @@ public class Player : MonoBehaviour
 
     [Header("Check Grounded")]
     [SerializeField] LayerMask groundedLayer;
-    [SerializeField] float rayDistance = 1;
     [SerializeField] float canGroundedAngle = 45;
     [SerializeField] float minGroundedRateAngle = 30;
     [SerializeField] float maxGroundedRateAngle = 60;
