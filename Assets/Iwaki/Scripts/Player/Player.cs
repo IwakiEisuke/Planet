@@ -79,6 +79,9 @@ public class Player : MonoBehaviour
     [SerializeField] float _toxicDamage = 5;
     [SerializeField] float _breathValue = 1;
 
+    [Header("Debug")]
+    [SerializeField] bool _debug;
+
     Rigidbody2D _rb;
 
     float _targetSpeed;
@@ -518,6 +521,8 @@ public class Player : MonoBehaviour
 
     private void OnGUI()
     {
+        if (!_debug) return;
+
         var style = new GUIStyle(GUI.skin.label)
         {
             fontSize = 40
