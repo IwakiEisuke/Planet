@@ -245,14 +245,13 @@ public class Player : MonoBehaviour
 
         var wallHit = Physics2D.Raycast(origin, Vector2.right * PlayerDirectionNormalized, _ledgeHangingWidth, hangingLayer.value);
         var floorHit = Physics2D.Raycast(crossPoint + Vector2.up * _ledgeHangingHeight, Vector2.down, _ledgeHangingHeight, hangingLayer.value);
+        var grabHit = Physics2D.Raycast(crossPoint + Vector2.up * _ledgeHangingHeight, Vector2.down, _ledgeHangingHeight, LayerMask.GetMask("GrabPoint"));
 
         if (Vector2.Dot(Vector2.up, floorHit.normal) < Mathf.Cos(canGroundedAngle * Mathf.Deg2Rad)) return;
 
-        var isGrabPoint = floorHit.collider.gameObject.layer == 11;
-
-        if (floorHit.distance > 0.01f && (isGrabPoint || wallHit.collider) && floorHit.collider)
+        if ((grabHit.collider || (floorHit.distance > 0.01f && wallHit.collider)) && floorHit.collider)
         {
-            print($"Hanging {(isGrabPoint ? "GrabPoint" : $"<wall:{wallHit.collider.name}>")} <floor:{floorHit.collider.name}>");
+            print($"Hanging {(grabHit.collider ? "GrabPoint" : $"<wall:{wallHit.collider.name}>")} <floor:{floorHit.collider.name}>");
             _isHanging = true;
             _rb.linearVelocity = Vector2.zero;
             _rb.bodyType = RigidbodyType2D.Kinematic;
