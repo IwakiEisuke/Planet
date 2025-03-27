@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
@@ -104,7 +105,7 @@ public class Player : MonoBehaviour
 
     readonly HashSet<Collider2D> _inContacts = new();
 
-    public event System.Action OnDead;
+    public UnityEvent OnDead;
 
     private void Start()
     {
