@@ -238,19 +238,36 @@ public class Player : MonoBehaviour
     void IsHanging()
     {
         if (!_canHanging) return;
-
         if (_rb.linearVelocityY > 0) return;
 
         var origin = _ledgeHangingOrigin + (Vector2)transform.position;
         var crossPoint = new Vector2(origin.x + _ledgeHangingWidth * PlayerDirectionNormalized, origin.y);
 
-        var wallHit = Physics2D.Raycast(origin, Vector2.right * PlayerDirectionNormalized, _ledgeHangingWidth, hangingLayer.value);
-        var floorHit = Physics2D.Raycast(crossPoint + Vector2.up * _ledgeHangingHeight, Vector2.down, _ledgeHangingHeight, hangingLayer.value);
         var grabHit = Physics2D.Raycast(crossPoint + Vector2.up * _ledgeHangingHeight, Vector2.down, _ledgeHangingHeight, LayerMask.GetMask("GrabPoint"));
 
-        if (grabHit.collider || (floorHit.distance > 0.01f && wallHit.collider && floorHit.collider && Vector2.Dot(Vector2.up, floorHit.normal) > Mathf.Cos(canGroundedAngle * Mathf.Deg2Rad)))
+        if (grabHit.collider)
         {
-            print($"Hanging {(grabHit.collider ? $"<GrabPoint: {grabHit.collider.name}" : $"<wall:{wallHit.collider.name}> <floor:{floorHit.collider.name}>")}");
+            print($"Hanging <grabPoint: {grabHit.collider.name}>");
+            Hanging();
+        }
+        else
+        {
+            var wallHit = Physics2D.Raycast(origin, Vector2.right * PlayerDirectionNormalized, _ledgeHangingWidth, hangingLayer.value);
+            var floorHit = Physics2D.Raycast(crossPoint + Vector2.up * _ledgeHangingHeight, Vector2.down, _ledgeHangingHeight, hangingLayer.value);
+
+            var rayInsideCollider = floorHit.distance < 0.01f;
+            var isHit = wallHit.collider && floorHit.collider;
+            var canGrounded = Vector2.Dot(Vector2.up, floorHit.normal) > Mathf.Cos(canGroundedAngle * Mathf.Deg2Rad);
+
+            if (!rayInsideCollider && isHit && canGrounded)
+            {
+                print($"Hanging <wall:{wallHit.collider.name}> <floor:{floorHit.collider.name}>");
+                Hanging();
+            }
+        }
+
+        void Hanging()
+        { 
             _isHanging = true;
             _rb.linearVelocity = Vector2.zero;
             _rb.bodyType = RigidbodyType2D.Kinematic;
@@ -258,6 +275,7 @@ public class Player : MonoBehaviour
             var leftDirection = new Vector3(-directionDistance, 0, directionMinZ);
             var rightDirection = new Vector3(directionDistance, 0, directionMinZ);
 
+            // U‚èŒü‚«’†‚ÉŠR’Í‚Ü‚è”»’è‚ªo‚½ê‡AŠR‚Ì‚ ‚é•ûŒü‚É‘¦À‚ÉŒü‚©‚¹‚é
             playerDirectionRaw = (playerDirection > 0 ? 1 : -1);
             playerDirectionTransform.localPosition = Vector3.Slerp(leftDirection, rightDirection, (playerDirectionRaw + 1) / 2);
             playerDirection = playerDirectionRaw;
