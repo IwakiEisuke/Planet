@@ -19,7 +19,7 @@ public class LevelRestarter : MonoBehaviour
         var player = FindAnyObjectByType<Player>();
         if (player)
         {
-            player.OnDead += () => _IsGameOver = true;
+            player.OnDead.AddListener(() => _IsGameOver = true);
         }
         else _IsGameOver = true;
     }

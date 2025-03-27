@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour
@@ -25,7 +26,6 @@ public class Player : MonoBehaviour
 
     [Header("Check Grounded")]
     [SerializeField] LayerMask groundedLayer;
-    [SerializeField] float rayDistance = 1;
     [SerializeField] float canGroundedAngle = 45;
     [SerializeField] float minGroundedRateAngle = 30;
     [SerializeField] float maxGroundedRateAngle = 60;
@@ -56,6 +56,7 @@ public class Player : MonoBehaviour
     [SerializeField] float _ledgeHangingWidth = 0.5f;
     [SerializeField] float _ledgeHangingHeight = 0.2f;
     [SerializeField] float _hangingCooldown = 0.3f;
+    [SerializeField] LayerMask hangingLayer;
     bool _canHanging;
     float _hangingRestoreTimer;
 
@@ -78,6 +79,12 @@ public class Player : MonoBehaviour
     [SerializeField] float _consumeOxygenWhenStopBreath = 2;
     [SerializeField] float _toxicDamage = 5;
     [SerializeField] float _breathValue = 1;
+    [SerializeField] float jumpCost = 1.6f;
+    [SerializeField] float slidingCost = 2.5f;
+    public bool autoStopBreath;
+
+    [Header("Debug")]
+    [SerializeField] bool _debug;
 
     Rigidbody2D _rb;
 
@@ -92,13 +99,13 @@ public class Player : MonoBehaviour
     bool _isSliding;
 
     public bool inToxicField;
-    bool _isStopBreath;
+    public bool isStopBreath;
 
     bool _isDead;
 
     readonly HashSet<Collider2D> _inContacts = new();
 
-    public event System.Action OnDead;
+    public UnityEvent OnDead;
 
     private void Start()
     {
@@ -107,7 +114,14 @@ public class Player : MonoBehaviour
         _targetSpeed = walkSpeed;
         _currentAccel = accel;
 
-        _oxygen.ConditionsForReduction.Add((current, diff) => _isStopBreath);
+        _oxygen.ConditionsForReduction.Add((current, diff) => isStopBreath);
+        _rb.sharedMaterial.friction = walkingFriction;
+
+        var camera = Physics2D.Raycast(transform.position, Vector2.down, 10, LayerMask.GetMask("CameraSwitcher"));
+        if (camera.collider)
+        {
+            camera.collider.GetComponent<CameraSwitcher>().SetCurrent();
+        }
     }
 
     private void Update()
@@ -199,24 +213,26 @@ public class Player : MonoBehaviour
             _rb.linearVelocity = Vector2.zero;
         }
 
-        if (inToxicField && !_isStopBreath)
+        if (inToxicField && !isStopBreath)
         {
-            if (!_health.Reduce(_toxicDamage * Time.deltaTime))
-            {
-                _isDead = true;
-                OnDead?.Invoke();
-                GetComponent<PlayerInput>().enabled = false;
-                print("Dead");
-            }
+            _health.Reduce(_toxicDamage * Time.deltaTime);
         }
 
-        if (_isStopBreath)
+        if (isStopBreath)
         {
             if (!_oxygen.Reduce(_consumeOxygenWhenStopBreath * Time.deltaTime))
             {
-                _isStopBreath = false;
+                isStopBreath = false;
             }
         }
+    }
+
+    public void Dead()
+    {
+        _isDead = true;
+        OnDead?.Invoke();
+        GetComponent<PlayerInput>().enabled = false;
+        print("Dead");
     }
 
     void IsHanging()
@@ -228,14 +244,15 @@ public class Player : MonoBehaviour
         var origin = _ledgeHangingOrigin + (Vector2)transform.position;
         var crossPoint = new Vector2(origin.x + _ledgeHangingWidth * PlayerDirectionNormalized, origin.y);
 
-        var wallHit = Physics2D.Raycast(origin, Vector2.right * PlayerDirectionNormalized, _ledgeHangingWidth, groundedLayer.value);
-        var floorHit = Physics2D.Raycast(crossPoint + Vector2.up * _ledgeHangingHeight, Vector2.down, _ledgeHangingHeight, groundedLayer.value);
+        var wallHit = Physics2D.Raycast(origin, Vector2.right * PlayerDirectionNormalized, _ledgeHangingWidth, hangingLayer.value);
+        var floorHit = Physics2D.Raycast(crossPoint + Vector2.up * _ledgeHangingHeight, Vector2.down, _ledgeHangingHeight, hangingLayer.value);
+        var grabHit = Physics2D.Raycast(crossPoint + Vector2.up * _ledgeHangingHeight, Vector2.down, _ledgeHangingHeight, LayerMask.GetMask("GrabPoint"));
 
         if (Vector2.Dot(Vector2.up, floorHit.normal) < Mathf.Cos(canGroundedAngle * Mathf.Deg2Rad)) return;
 
-        if (floorHit.distance > 0.01f && wallHit.collider && floorHit.collider)
+        if ((grabHit.collider || (floorHit.distance > 0.01f && wallHit.collider)) && floorHit.collider)
         {
-            print($"Hanging <wall:{wallHit.collider.name}> <floor:{floorHit.collider.name}>");
+            print($"Hanging {(grabHit.collider ? "GrabPoint" : $"<wall:{wallHit.collider.name}>")} <floor:{floorHit.collider.name}>");
             _isHanging = true;
             _rb.linearVelocity = Vector2.zero;
             _rb.bodyType = RigidbodyType2D.Kinematic;
@@ -336,7 +353,7 @@ public class Player : MonoBehaviour
         if (_isCrouching && !_isHanging && _isGrounded)
         {
             // HeadSliding
-            if (_oxygen.Reduce(2.5f))
+            if (_oxygen.Reduce(slidingCost))
             {
                 var angle = slidingAngle * Mathf.Deg2Rad;
                 _rb.linearVelocity = new Vector2(playerDirectionRaw * slidingSpeed * Mathf.Cos(angle), slidingSpeed * Mathf.Sin(angle));
@@ -351,7 +368,7 @@ public class Player : MonoBehaviour
         }
         else
         {
-            if (_oxygen.Reduce(1.6f))
+            if (_oxygen.Reduce(jumpCost))
             {
                 Vector2 jumpVel;
 
@@ -366,6 +383,8 @@ public class Player : MonoBehaviour
 
                 _canGroundedTimer = groundedCooldown;
                 _canGrounded = false;
+
+                _isGrounded = false;
 
                 _rb.linearVelocityX += jumpVel.x;
                 _rb.linearVelocityY = jumpVel.y;
@@ -463,7 +482,7 @@ public class Player : MonoBehaviour
     {
         print("StopBreath");
 
-        _isStopBreath = true;
+        isStopBreath = true;
     }
 
     void OnBreathe()
@@ -472,7 +491,7 @@ public class Player : MonoBehaviour
 
         _oxygen.Add(_breathValue);
 
-        _isStopBreath = false;
+        isStopBreath = false;
     }
 
     void Throw()
@@ -518,6 +537,8 @@ public class Player : MonoBehaviour
 
     private void OnGUI()
     {
+        if (!_debug) return;
+
         var style = new GUIStyle(GUI.skin.label)
         {
             fontSize = 40

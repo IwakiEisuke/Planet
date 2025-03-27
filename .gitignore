@@ -75,7 +75,7 @@ crashlytics-build.properties
 
 #ignoreを追加する場合は自分の名前の所に追加する
 #Iwaki
-
+Assets/Iwaki/Fonts/*
 
 
 #Go
