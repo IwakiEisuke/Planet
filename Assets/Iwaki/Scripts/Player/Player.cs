@@ -382,6 +382,8 @@ public class Player : MonoBehaviour
                 _canGroundedTimer = groundedCooldown;
                 _canGrounded = false;
 
+                _isGrounded = false;
+
                 _rb.linearVelocityX += jumpVel.x;
                 _rb.linearVelocityY = jumpVel.y;
             }
