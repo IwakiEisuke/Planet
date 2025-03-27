@@ -112,6 +112,7 @@ public class Player : MonoBehaviour
         _currentAccel = accel;
 
         _oxygen.ConditionsForReduction.Add((current, diff) => _isStopBreath);
+        _rb.sharedMaterial.friction = walkingFriction;
     }
 
     private void Update()
