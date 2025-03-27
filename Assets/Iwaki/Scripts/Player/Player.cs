@@ -80,6 +80,7 @@ public class Player : MonoBehaviour
     [SerializeField] float _breathValue = 1;
     [SerializeField] float jumpCost = 1.6f;
     [SerializeField] float slidingCost = 2.5f;
+    public bool autoStopBreath;
 
     [Header("Debug")]
     [SerializeField] bool _debug;
@@ -97,7 +98,7 @@ public class Player : MonoBehaviour
     bool _isSliding;
 
     public bool inToxicField;
-    bool _isStopBreath;
+    public bool isStopBreath;
 
     bool _isDead;
 
@@ -112,7 +113,7 @@ public class Player : MonoBehaviour
         _targetSpeed = walkSpeed;
         _currentAccel = accel;
 
-        _oxygen.ConditionsForReduction.Add((current, diff) => _isStopBreath);
+        _oxygen.ConditionsForReduction.Add((current, diff) => isStopBreath);
         _rb.sharedMaterial.friction = walkingFriction;
     }
 
@@ -205,24 +206,26 @@ public class Player : MonoBehaviour
             _rb.linearVelocity = Vector2.zero;
         }
 
-        if (inToxicField && !_isStopBreath)
+        if (inToxicField && !isStopBreath)
         {
-            if (!_health.Reduce(_toxicDamage * Time.deltaTime))
-            {
-                _isDead = true;
-                OnDead?.Invoke();
-                GetComponent<PlayerInput>().enabled = false;
-                print("Dead");
-            }
+            _health.Reduce(_toxicDamage * Time.deltaTime);
         }
 
-        if (_isStopBreath)
+        if (isStopBreath)
         {
             if (!_oxygen.Reduce(_consumeOxygenWhenStopBreath * Time.deltaTime))
             {
-                _isStopBreath = false;
+                isStopBreath = false;
             }
         }
+    }
+
+    public void Dead()
+    {
+        _isDead = true;
+        OnDead?.Invoke();
+        GetComponent<PlayerInput>().enabled = false;
+        print("Dead");
     }
 
     void IsHanging()
@@ -469,7 +472,7 @@ public class Player : MonoBehaviour
     {
         print("StopBreath");
 
-        _isStopBreath = true;
+        isStopBreath = true;
     }
 
     void OnBreathe()
@@ -478,7 +481,7 @@ public class Player : MonoBehaviour
 
         _oxygen.Add(_breathValue);
 
-        _isStopBreath = false;
+        isStopBreath = false;
     }
 
     void Throw()

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class PlayerStats : MonoBehaviour
 {
@@ -11,10 +12,11 @@ public class PlayerStats : MonoBehaviour
     [SerializeField] bool canRegenerate;
     [SerializeField] bool successWhenExhausted;
 
+    public UnityEvent OnExhaustion;
+
     float _current;
     float _timeBeforeValueDecreased;
 
-    public event Action OnExhaustion;
     readonly public List<Func<float, float, bool>> ConditionsForReduction = new();
 
     public bool IsRegenerate { get; set; }

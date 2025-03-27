@@ -9,6 +9,7 @@ public class PlayerToxicReceiver : MonoBehaviour
         if (collision.GetComponent<ToxicGas>())
         {
             player.inToxicField = true;
+            if (player.autoStopBreath) player.isStopBreath = true;
         }
     }
 
@@ -17,6 +18,7 @@ public class PlayerToxicReceiver : MonoBehaviour
         if (collision.GetComponent<ToxicGas>())
         {
             player.inToxicField = false;
+            if (player.autoStopBreath) player.isStopBreath = false;
         }
     }
 }
