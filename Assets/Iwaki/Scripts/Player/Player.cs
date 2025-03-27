@@ -56,6 +56,7 @@ public class Player : MonoBehaviour
     [SerializeField] float _ledgeHangingWidth = 0.5f;
     [SerializeField] float _ledgeHangingHeight = 0.2f;
     [SerializeField] float _hangingCooldown = 0.3f;
+    [SerializeField] LayerMask hangingLayer;
     bool _canHanging;
     float _hangingRestoreTimer;
 
@@ -231,8 +232,8 @@ public class Player : MonoBehaviour
         var origin = _ledgeHangingOrigin + (Vector2)transform.position;
         var crossPoint = new Vector2(origin.x + _ledgeHangingWidth * PlayerDirectionNormalized, origin.y);
 
-        var wallHit = Physics2D.Raycast(origin, Vector2.right * PlayerDirectionNormalized, _ledgeHangingWidth, groundedLayer.value);
-        var floorHit = Physics2D.Raycast(crossPoint + Vector2.up * _ledgeHangingHeight, Vector2.down, _ledgeHangingHeight, groundedLayer.value);
+        var wallHit = Physics2D.Raycast(origin, Vector2.right * PlayerDirectionNormalized, _ledgeHangingWidth, hangingLayer.value);
+        var floorHit = Physics2D.Raycast(crossPoint + Vector2.up * _ledgeHangingHeight, Vector2.down, _ledgeHangingHeight, hangingLayer.value);
 
         if (Vector2.Dot(Vector2.up, floorHit.normal) < Mathf.Cos(canGroundedAngle * Mathf.Deg2Rad)) return;
 
