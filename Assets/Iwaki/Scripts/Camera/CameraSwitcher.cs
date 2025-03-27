@@ -46,9 +46,14 @@ public class CameraSwitcher : MonoBehaviour
         if (min.x < p.x && p.x < max.x && min.y < p.y && p.y < max.y)
         {
             print($"Enter Area:{name}");
-            cam.Prioritize();
-            current = cam;
+            SetCurrent();
         }
+    }
+
+    public void SetCurrent()
+    {
+        cam.Prioritize();
+        current = cam;
     }
 
     private void OnDrawGizmos()

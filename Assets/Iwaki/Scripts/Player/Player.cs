@@ -115,6 +115,12 @@ public class Player : MonoBehaviour
 
         _oxygen.ConditionsForReduction.Add((current, diff) => isStopBreath);
         _rb.sharedMaterial.friction = walkingFriction;
+
+        var camera = Physics2D.Raycast(transform.position, Vector2.down, 10, LayerMask.GetMask("CameraSwitcher"));
+        if (camera.collider)
+        {
+            camera.collider.GetComponent<CameraSwitcher>().SetCurrent();
+        }
     }
 
     private void Update()
