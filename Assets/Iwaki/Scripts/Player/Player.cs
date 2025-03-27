@@ -78,6 +78,8 @@ public class Player : MonoBehaviour
     [SerializeField] float _consumeOxygenWhenStopBreath = 2;
     [SerializeField] float _toxicDamage = 5;
     [SerializeField] float _breathValue = 1;
+    [SerializeField] float jumpCost = 1.6f;
+    [SerializeField] float slidingCost = 2.5f;
 
     [Header("Debug")]
     [SerializeField] bool _debug;
@@ -340,7 +342,7 @@ public class Player : MonoBehaviour
         if (_isCrouching && !_isHanging && _isGrounded)
         {
             // HeadSliding
-            if (_oxygen.Reduce(2.5f))
+            if (_oxygen.Reduce(slidingCost))
             {
                 var angle = slidingAngle * Mathf.Deg2Rad;
                 _rb.linearVelocity = new Vector2(playerDirectionRaw * slidingSpeed * Mathf.Cos(angle), slidingSpeed * Mathf.Sin(angle));
@@ -355,7 +357,7 @@ public class Player : MonoBehaviour
         }
         else
         {
-            if (_oxygen.Reduce(1.6f))
+            if (_oxygen.Reduce(jumpCost))
             {
                 Vector2 jumpVel;
 
